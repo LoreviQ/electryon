@@ -6,3 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+solana-program = "1.16"
+thiserror = "1.0"
+spl-token = { version = "3.5", features = ["no-entrypoint"] }
+borsh = "0.10"
+zeus-sdk = "0.1"  # hypothetical Zeus Network SDK
+pyth-sdk-solana = "0.7"  # for price feeds
