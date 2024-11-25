@@ -1,6 +1,7 @@
-import { authCookie } from "~/cookies/auth";
 import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
+
+import { authCookie } from "~/cookies/auth";
 
 export async function loader({ request }: { request: Request }) {
     const cookieHeader = request.headers.get("Cookie");
