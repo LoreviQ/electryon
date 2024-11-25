@@ -7,14 +7,10 @@ use solana_program::{
 };
 use borsh::{BorshDeserialize, BorshSerialize};
 
-#[derive(BorshSerialize, BorshDeserialize)] 
-pub struct StablecoinVault {
-    pub owner: Pubkey,             // Address of the vault owner
-    pub btc_collateral: u64,       // Amount of BTC collateral stored
-    pub stablecoins_issued: u64,   // Amount of stablecoins in circulation
-    pub collateral_ratio: u64,     // Current collateralization ratio
-    pub oracle_price: u64,         // Current BTC price from oracle
-}
+mod processor;
+mod state;
+
+use processor::Processor;
 
 #[derive(BorshSerialize, BorshDeserialize)]
 pub enum StablecoinInstruction {
@@ -37,10 +33,10 @@ pub fn process_instruction(
     
     match instruction {
         StablecoinInstruction::InitializeVault => {
-            process_initialize_vault(accounts, program_id)
+            Processor::process_initialize_vault(accounts, program_id)
         },
         StablecoinInstruction::DepositCollateral { amount } => {
-            process_deposit_collateral(accounts, amount, program_id)
+            Processor::process_deposit_collateral(accounts, amount, program_id)
         },
         // ... other instruction handlers
     }
