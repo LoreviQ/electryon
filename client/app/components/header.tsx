@@ -1,4 +1,7 @@
 import { Link } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
+
+import { Bars3Icon } from "@heroicons/react/24/solid";
 
 import { Logo } from "~/components/icons";
 
@@ -7,16 +10,20 @@ interface HeaderProps {
     contentWidth: string;
 }
 export function Header({ username, contentWidth }: HeaderProps) {
+    const fetcher = useFetcher();
     return (
         <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
-            <div className="container mx-auto px-4">
-                <div className={`flex items-center justify-between h-16 mx-auto ${contentWidth}`}>
-                    <Link to="/" className="flex items-center">
-                        <Logo />
-                    </Link>
-                    <SearchBar />
-                    <UserInfo username={username} />
-                </div>
+            <div className={`flex items-center justify-between h-16 px-8 mx-auto ${contentWidth}`}>
+                <fetcher.Form method="post" action="toggleSidebar">
+                    <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200">
+                        <Bars3Icon className="size-6" />
+                    </button>
+                </fetcher.Form>
+                <Link to="/" className="flex items-center">
+                    <Logo />
+                </Link>
+                <SearchBar />
+                <UserInfo username={username} />
             </div>
         </header>
     );

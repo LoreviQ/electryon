@@ -1,8 +1,8 @@
 import { Form } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 
-import type { AuthCookie } from "~/cookies/auth";
-import { authCookie } from "~/cookies/auth";
+import type { AuthCookie } from "~/utils/cookies";
+import { authCookie } from "~/utils/cookies";
 
 export async function action({ request }: { request: Request }) {
     try {

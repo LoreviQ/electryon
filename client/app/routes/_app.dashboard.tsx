@@ -1,7 +1,7 @@
 import { useOutletContext } from "@remix-run/react";
 import { Form } from "@remix-run/react";
 
-import type { AuthCookie } from "~/cookies/auth";
+import type { AuthCookie } from "~/utils/cookies";
 
 export default function Dashboard() {
     const userData = useOutletContext<AuthCookie>();

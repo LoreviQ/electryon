@@ -1,6 +1,6 @@
 import { redirect } from "@remix-run/node";
 
-import { authCookie } from "~/cookies/auth";
+import { authCookie } from "~/utils/cookies";
 
 export async function action() {
     // sets the cookie to a non-functional value

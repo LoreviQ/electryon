@@ -12,6 +12,7 @@
     "docker:build": "docker build -t electryon-client -f ./Dockerfile ."
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@remix-run/node": "2.13.0",
     "@remix-run/react": "2.13.0",
     "@remix-run/serve": "2.13.0",
