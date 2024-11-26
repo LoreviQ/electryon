@@ -19,8 +19,8 @@ export function Header({ preferences, username, contentWidth }: HeaderProps) {
 
     return (
         <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
-            <div className={`flex items-center justify-between h-16 px-8 mx-auto ${contentWidth}`}>
-                <div className="flex items-center space-x-4">
+            <div className={`grid grid-cols-10 items-center h-16 px-8 mx-auto ${contentWidth}`}>
+                <div className="flex items-center space-x-4 justify-start col-span-2">
                     <fetcher.Form method="post" action="updatePreferences">
                         <input type="hidden" name="narrowMode" value={(!preferences.narrowMode).toString()} />
                         <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200">
@@ -41,10 +41,14 @@ export function Header({ preferences, username, contentWidth }: HeaderProps) {
                         <Logo />
                     </Link>
                 </div>
-                <SearchBar />
-                <div className="relative">
-                    <UserInfo username={username} onClick={() => setIsOpen(!isOpen)} />
-                    {isOpen && <Dropdown />}
+                <div className="flex justify-center col-span-6">
+                    <SearchBar />
+                </div>
+                <div className="flex justify-end col-span-2">
+                    <div className="relative">
+                        <UserInfo username={username} onClick={() => setIsOpen(!isOpen)} />
+                        {isOpen && <Dropdown />}
+                    </div>
                 </div>
             </div>
         </header>
@@ -53,7 +57,7 @@ export function Header({ preferences, username, contentWidth }: HeaderProps) {
 
 function SearchBar() {
     return (
-        <div className="flex-1 max-w-2xl mx-8">
+        <div className="flex-1 max-w-xl">
             <div className="relative">
                 <input
                     type="search"
