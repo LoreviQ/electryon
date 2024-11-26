@@ -1,3 +1,11 @@
+export function Logo() {
+    return (
+        <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            Electryon
+        </span>
+    );
+}
+
 export function CoinIcon() {
     return (
         <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
