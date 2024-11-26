@@ -62,7 +62,7 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
         <aside
             className={`${
                 isOpen ? "w-64" : "w-20"
-            } min-h-screen bg-gray-900 border-r border-gray-800 transition-all duration-300 ease-in-out`}
+            } min-h-screen  border-r border-gray-800 transition-all duration-300 ease-in-out`}
         >
             <div className="px-4 py-6">
                 <nav className="space-y-2">
@@ -84,11 +84,7 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
                         );
                     })}
                 </nav>
-
-                {/* Divider */}
                 <div className="my-6 border-t border-gray-800" />
-
-                {/* Additional sections can be added here */}
             </div>
         </aside>
     );
