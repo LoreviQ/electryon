@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "@remix-run/react";
 import { useFetcher } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 
 import { Bars3Icon } from "@heroicons/react/24/solid";
 
@@ -10,7 +12,9 @@ interface HeaderProps {
     contentWidth: string;
 }
 export function Header({ username, contentWidth }: HeaderProps) {
+    const [isOpen, setIsOpen] = useState(false);
     const fetcher = useFetcher();
+
     return (
         <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
             <div className={`flex items-center justify-between h-16 px-8 mx-auto ${contentWidth}`}>
@@ -23,7 +27,10 @@ export function Header({ username, contentWidth }: HeaderProps) {
                     <Logo />
                 </Link>
                 <SearchBar />
-                <UserInfo username={username} />
+                <div className="relative">
+                    <UserInfo username={username} onClick={() => setIsOpen(!isOpen)} />
+                    {isOpen && <Dropdown />}
+                </div>
             </div>
         </header>
     );
@@ -53,12 +60,26 @@ function SearchBar() {
     );
 }
 
-function UserInfo({ username }: { username: string }) {
+function Dropdown() {
+    return (
+        <div className="absolute right-0 top-full mt-3 w-48 rounded-lg bg-gray-800 border border-gray-700 shadow-lg">
+            <div className="py-1">
+                <Form method="post" action="/logout">
+                    <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 transition-colors">
+                        Logout
+                    </button>
+                </Form>
+            </div>
+        </div>
+    );
+}
+
+function UserInfo({ username, onClick }: { username: string; onClick: () => void }) {
     return (
         <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
                 <span className="text-gray-300">{username}</span>
-                <button className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+                <button onClick={onClick} className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
                     <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                             strokeLinecap="round"
