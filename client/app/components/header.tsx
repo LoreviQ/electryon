@@ -3,29 +3,44 @@ import { Link } from "@remix-run/react";
 import { useFetcher } from "@remix-run/react";
 import { Form } from "@remix-run/react";
 
-import { Bars3Icon } from "@heroicons/react/24/solid";
+import { Bars3Icon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
 import { Logo } from "~/components/icons";
+import { PrefsCookie } from "~/utils/cookies";
 
 interface HeaderProps {
+    preferences: PrefsCookie;
     username: string;
     contentWidth: string;
 }
-export function Header({ username, contentWidth }: HeaderProps) {
+export function Header({ preferences, username, contentWidth }: HeaderProps) {
     const [isOpen, setIsOpen] = useState(false);
     const fetcher = useFetcher();
 
     return (
         <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
             <div className={`flex items-center justify-between h-16 px-8 mx-auto ${contentWidth}`}>
-                <fetcher.Form method="post" action="toggleSidebar">
-                    <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200">
-                        <Bars3Icon className="size-6" />
-                    </button>
-                </fetcher.Form>
-                <Link to="/" className="flex items-center">
-                    <Logo />
-                </Link>
+                <div className="flex items-center space-x-4">
+                    <fetcher.Form method="post" action="updatePreferences">
+                        <input type="hidden" name="narrowMode" value={(!preferences.narrowMode).toString()} />
+                        <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200">
+                            {preferences.narrowMode ? (
+                                <ChevronLeftIcon className="size-6" />
+                            ) : (
+                                <ChevronRightIcon className="size-6" />
+                            )}
+                        </button>
+                    </fetcher.Form>
+                    <fetcher.Form method="post" action="updatePreferences">
+                        <input type="hidden" name="showSidebar" value={(!preferences.showSidebar).toString()} />
+                        <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200">
+                            <Bars3Icon className="size-6" />
+                        </button>
+                    </fetcher.Form>
+                    <Link to="/" className="flex items-center">
+                        <Logo />
+                    </Link>
+                </div>
                 <SearchBar />
                 <div className="relative">
                     <UserInfo username={username} onClick={() => setIsOpen(!isOpen)} />

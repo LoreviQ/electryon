@@ -22,13 +22,13 @@ export default function App() {
     const loaderData = useLoaderData<typeof loader>();
     const userData = loaderData.userData as AuthCookie;
     const preferences = loaderData.preferences as PrefsCookie;
-    const widthClass = "max-w-7xl";
+    const widthClass = preferences.narrowMode ? "max-w-7xl" : "";
     return (
         <div className={`min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white `}>
-            <Header username={userData.username} contentWidth={widthClass} />
+            <Header preferences={preferences} username={userData.username} contentWidth={widthClass} />
             <div className={`mx-auto ${widthClass}`}>
                 <div className="flex">
-                    <Sidebar isOpen={preferences?.showSidebar ?? true} />
+                    <Sidebar isOpen={preferences.showSidebar} />
                     <main className="flex-1 p-6">
                         <Outlet context={userData} />
                     </main>
