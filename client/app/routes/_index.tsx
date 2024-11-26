@@ -21,19 +21,19 @@ export default function Index() {
                 <FeatureCard
                     header="BTC-Backed Stablecoin"
                     description="Secure your wealth with our Bitcoin-backed stablecoin, combining stability with the security of BTC."
-                    icon={<CoinIcon />}
+                    icon={<CoinIcon color="text-blue-400" />}
                     iconBgColor="bg-blue-500/20"
                 />
                 <FeatureCard
                     header="Fractional Investment"
                     description="Invest in verified businesses with any amount through our fractional ownership platform."
-                    icon={<BuildingIcon />}
+                    icon={<BuildingIcon color="text-purple-400" />}
                     iconBgColor="bg-purple-500/20"
                 />
                 <FeatureCard
                     header="Verified Partners"
                     description="All partner businesses are thoroughly vetted to ensure security and reliability for our investors."
-                    icon={<VerifiedIcon />}
+                    icon={<VerifiedIcon color="text-green-400" />}
                     iconBgColor="bg-green-500/20"
                 />
             </div>
