@@ -6,6 +6,7 @@ import { Outlet } from "@remix-run/react";
 import type { AuthCookie } from "~/cookies/auth";
 import { authCookie } from "~/cookies/auth";
 import { Header } from "~/components/header";
+import { Sidebar } from "~/components/sidebar";
 
 export async function loader({ request }: { request: Request }) {
     const cookieHeader = request.headers.get("Cookie");
@@ -20,11 +21,14 @@ export default function App() {
     const loaderData = useLoaderData<typeof loader>();
     const userData = loaderData.userData as AuthCookie;
     return (
-        <>
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
             <Header username={userData.username} />
-            <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center px-4">
-                <Outlet context={userData} />
+            <div className="flex">
+                <Sidebar />
+                <main className="flex-1 p-6">
+                    <Outlet context={userData} />
+                </main>
             </div>
-        </>
+        </div>
     );
 }
