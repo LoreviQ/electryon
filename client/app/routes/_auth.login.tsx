@@ -2,7 +2,7 @@ import { Form } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 
 import type { AuthCookie } from "~/utils/cookies";
-import { authCookie } from "~/utils/cookies";
+import { authStorage } from "~/utils/cookies";
 
 export async function action({ request }: { request: Request }) {
     try {
@@ -12,14 +12,16 @@ export async function action({ request }: { request: Request }) {
         if (!username || !password || typeof username !== "string" || typeof password !== "string") {
             return null;
         }
-        const cookie: AuthCookie = {
+        const session = await authStorage.getSession();
+        const userData: AuthCookie = {
             userid: "1",
             username,
             authenticated: true,
         };
+        session.set("user", userData);
         return redirect("/dashboard", {
             headers: {
-                "Set-Cookie": await authCookie.serialize(cookie),
+                "Set-Cookie": await authStorage.commitSession(session),
             },
         });
     } catch (error) {

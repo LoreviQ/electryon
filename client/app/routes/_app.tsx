@@ -4,13 +4,14 @@ import { useLoaderData } from "@remix-run/react";
 import { Outlet } from "@remix-run/react";
 
 import type { AuthCookie, PrefsCookie } from "~/utils/cookies";
-import { authCookie, prefsCookie, DEFAULT_PREFS } from "~/utils/cookies";
+import { authStorage, prefsCookie, DEFAULT_PREFS } from "~/utils/cookies";
 import { Header } from "~/components/header";
 import { Sidebar } from "~/components/sidebar";
 
 export async function loader({ request }: { request: Request }) {
     const cookieHeader = request.headers.get("Cookie");
-    const userData = await authCookie.parse(cookieHeader);
+    const session = await authStorage.getSession(cookieHeader);
+    const userData = session.get("user");
     if (!userData) {
         return redirect("/login");
     }

@@ -1,11 +1,11 @@
 import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 
-import { authCookie } from "~/utils/cookies";
+import { authStorage } from "~/utils/cookies";
 
 export async function loader({ request }: { request: Request }) {
-    const cookieHeader = request.headers.get("Cookie");
-    const userData = await authCookie.parse(cookieHeader);
+    const session = await authStorage.getSession(request.headers.get("Cookie"));
+    const userData = session.get("user");
     if (userData) {
         return redirect("/dashboard");
     }

@@ -1,12 +1,15 @@
-import { createCookie } from "@remix-run/node";
+import { createCookieSessionStorage, createCookie } from "@remix-run/node";
 
-// Cookie for storing user authentication data
-export const authCookie = createCookie("auth", {
-    maxAge: 604_800, // one week
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
+// Session storage for auth
+export const authStorage = createCookieSessionStorage({
+    cookie: {
+        name: "auth",
+        maxAge: 604_800, // one week
+        secure: process.env.NODE_ENV === "production",
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+    },
 });
 
 export type AuthCookie = {

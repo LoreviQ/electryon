@@ -1,15 +1,13 @@
 import { redirect } from "@remix-run/node";
 
-import { authCookie } from "~/utils/cookies";
+import { authStorage } from "~/utils/cookies";
 
-export async function action() {
-    // sets the cookie to a non-functional value
+export async function action({ request }: { request: Request }) {
+    const session = await authStorage.getSession(request.headers.get("Cookie"));
+
     return redirect("/", {
         headers: {
-            "Set-Cookie": await authCookie.serialize("", {
-                expires: new Date(0),
-                maxAge: 0,
-            }),
+            "Set-Cookie": await authStorage.destroySession(session),
         },
     });
 }

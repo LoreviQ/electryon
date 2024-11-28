@@ -1,9 +1,8 @@
 import { Form, useActionData } from "@remix-run/react";
 import { redirect, json } from "@remix-run/node";
-import type { ActionFunction } from "@remix-run/node";
 
 import type { AuthCookie } from "~/utils/cookies";
-import { authCookie } from "~/utils/cookies";
+import { authStorage } from "~/utils/cookies";
 
 type ActionData = {
     error?: string;
@@ -35,15 +34,16 @@ export async function action({ request }: { request: Request }) {
         }
 
         // temporary logic for demo
-        const cookie: AuthCookie = {
+        const session = await authStorage.getSession();
+        const userData: AuthCookie = {
             userid: "1",
             username,
             authenticated: true,
         };
-
+        session.set("user", userData);
         return redirect("/dashboard", {
             headers: {
-                "Set-Cookie": await authCookie.serialize(cookie),
+                "Set-Cookie": await authStorage.commitSession(session),
             },
         });
     } catch (error) {
