@@ -74,3 +74,22 @@ export function CogIcon({ color = "" }: IconProps) {
         </svg>
     );
 }
+
+export function DiceIcon({ color = "" }: IconProps) {
+    return (
+        <svg className={`w-6 h-6 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"
+            />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01"
+            />
+        </svg>
+    );
+}

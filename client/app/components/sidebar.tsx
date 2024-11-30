@@ -1,6 +1,6 @@
 import { useLocation } from "@remix-run/react";
 
-import { BlockIcon, BuildingIcon, CogIcon } from "./icons";
+import { BlockIcon, BuildingIcon, CogIcon, DiceIcon } from "./icons";
 import { NavButton } from "./buttons";
 
 interface SidebarProps {
@@ -10,7 +10,12 @@ interface SidebarProps {
 export function Sidebar({ isOpen = true }: SidebarProps) {
     const location = useLocation();
 
-    const navLinks = [
+    const navLinksHigh = [
+        {
+            name: "Play",
+            path: "/play",
+            icon: <DiceIcon />,
+        },
         {
             name: "Dashboard",
             path: "/dashboard",
@@ -21,6 +26,8 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
             path: "/partners",
             icon: <BuildingIcon />,
         },
+    ];
+    const navLinksLow = [
         {
             name: "Settings",
             path: "/settings",
@@ -36,7 +43,7 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
         >
             <div className="px-4 py-6">
                 <nav className="space-y-2">
-                    {navLinks.map((link) => {
+                    {navLinksHigh.map((link) => {
                         return (
                             <NavButton
                                 key={link.path}
@@ -49,7 +56,21 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
                         );
                     })}
                 </nav>
-                <div className="my-6 border-t border-gray-800" />
+                <div className="mt-6 mb-2 border-t border-gray-800" />
+                <nav className="space-y-2">
+                    {navLinksLow.map((link) => {
+                        return (
+                            <NavButton
+                                key={link.path}
+                                path={link.path}
+                                label={link.name}
+                                icon={link.icon}
+                                isActive={location.pathname === link.path}
+                                isOpen={isOpen}
+                            />
+                        );
+                    })}
+                </nav>
             </div>
         </aside>
     );
