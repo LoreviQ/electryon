@@ -9,10 +9,11 @@ const BOARD_TILES = [
     { id: 1, type: "partner", color: "bg-teal-600", effect: "Obtain Colour Coffee Tokens", colSpan: 1 },
     { id: 2, type: "chance", color: "bg-yellow-500", effect: "Draw a card", colSpan: 1 },
     { id: 3, type: "partner", color: "bg-teal-600", effect: "Obtain Colour Coffee Tokens", colSpan: 1 },
-    { id: 4, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
-    { id: 5, type: "community chest", color: "bg-purple-500", effect: "Open chest", colSpan: 1 },
-    { id: 6, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
-    { id: 7, type: "prison", color: "bg-green-400", effect: "TBD", colSpan: 2 },
+    { id: 4, type: "community chest", color: "bg-purple-500", effect: "Open chest", colSpan: 1 },
+    { id: 5, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
+    { id: 6, type: "chance", color: "bg-yellow-500", effect: "Draw a card", colSpan: 1 },
+    { id: 7, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
+    { id: 8, type: "prison", color: "bg-green-400", effect: "TBD", colSpan: 2 },
 ];
 
 export type Tile = {
@@ -75,9 +76,9 @@ export default function Play() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
             <h1 className="text-4xl font-bold text-center">Play</h1>
-            <div className="bg-gray-800 rounded-lg p-6 shadow-lg w-full">
+            <div className="bg-gray-800 rounded-lg p-6 min-w-0 mx-auto overflow-hidden">
                 <Board boardData={boardData} playerData={playerData} />
                 {/* Dice Section */}
                 <div className="flex flex-col items-center gap-4">

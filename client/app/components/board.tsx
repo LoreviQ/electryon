@@ -41,18 +41,12 @@ export function Board({ boardData, playerData }: BoardProps) {
         <div
             ref={boardRef}
             className="overflow-x-auto cursor-grab active:cursor-grabbing scrollbar-hide"
-            style={{
-                WebkitMaskImage: "linear-gradient(to right, black 90%, transparent 100%)",
-            }}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
         >
-            <div
-                className="grid grid-flow-col mb-8 pb-4"
-                style={{
-                    gridAutoColumns: "150px",
-                    width: "fit-content",
-                    minWidth: "100%",
-                }}
-            >
+            <div className="grid grid-flow-col auto-cols-[150px] w-max min-w-full mb-8 pb-4">
                 {boardData.map((tile, index) => (
                     <Tile
                         key={index}
