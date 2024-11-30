@@ -1,4 +1,72 @@
 import { CoinIcon, BuildingIcon, DiceIcon, CogIcon } from "./icons";
+import { useState, useRef } from "react";
+
+import type { Board, Player } from "~/routes/_app.play";
+
+interface BoardProps {
+    boardData: Board;
+    playerData: Player;
+}
+export function Board({ boardData, playerData }: BoardProps) {
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    const boardRef = useRef<HTMLDivElement>(null);
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        setIsDragging(true);
+        setStartX(e.pageX - (boardRef.current?.offsetLeft ?? 0));
+        setScrollLeft(boardRef.current?.scrollLeft ?? 0);
+    };
+
+    const handleMouseLeave = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging) return;
+
+        e.preventDefault();
+        if (!boardRef.current) return;
+
+        const x = e.pageX - boardRef.current.offsetLeft;
+        const walk = (x - startX) * 2;
+        boardRef.current.scrollLeft = scrollLeft - walk;
+    };
+    return (
+        <div
+            ref={boardRef}
+            className="overflow-x-auto cursor-grab active:cursor-grabbing scrollbar-hide"
+            style={{
+                WebkitMaskImage: "linear-gradient(to right, black 90%, transparent 100%)",
+            }}
+        >
+            <div
+                className="grid grid-flow-col mb-8 pb-4"
+                style={{
+                    gridAutoColumns: "150px",
+                    width: "fit-content",
+                    minWidth: "100%",
+                }}
+            >
+                {boardData.map((tile, index) => (
+                    <Tile
+                        key={index}
+                        type={tile.type}
+                        color={tile.color}
+                        colSpan={tile.colSpan}
+                        showPlayerAvatar={playerData.position === index}
+                        PlayerAvatar={playerData.avatar}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+}
 
 interface TileProps {
     type: string;
