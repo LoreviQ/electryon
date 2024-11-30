@@ -1,4 +1,4 @@
-import { CoinIcon, BuildingIcon, DiceIcon, CogIcon } from "./icons";
+import { BuildingIcon, DiceIcon, CogIcon } from "./icons";
 import { useState, useRef } from "react";
 
 import type { Board, Player } from "~/routes/_app.play";
@@ -75,12 +75,10 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
         switch (type) {
             case "chance":
                 return <DiceIcon color={color} />;
-            case "tax":
-                return <CoinIcon color={color} />;
             case "chest":
                 return <CogIcon color={color} />;
             case "start":
-            case "finish":
+            case "prison":
                 return <BuildingIcon color={color} />;
             default:
                 return null;
@@ -88,11 +86,11 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
     };
 
     return (
-        <div className={`relative h-40 col-span-${colSpan} bg-gray-800 border-2 border-sky-400/80`}>
+        <div className={`relative h-72 col-span-${colSpan} bg-gray-800 border-2 border-sky-400/80 select-none`}>
             {type === "partner" ? (
                 // Partner tile with color band at top
                 <div className="flex flex-col h-full">
-                    <div className={`h-12 ${color}`} />
+                    <div className={`h-20 ${color}`} />
                     <div className="flex-1 flex items-center justify-center">
                         <span className="text-sm">{type}</span>
                         {showPlayerAvatar && <div className="absolute text-4xl z-10">{PlayerAvatar}</div>}
@@ -106,6 +104,35 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
                     {showPlayerAvatar && <div className="absolute text-4xl z-10">{PlayerAvatar}</div>}
                 </div>
             )}
+        </div>
+    );
+}
+
+export function Dice({ numberOfDice = 2 }: { numberOfDice?: number }) {
+    const [diceValues, setDiceValues] = useState(Array(numberOfDice).fill(1));
+
+    const rollDice = () => {
+        const newValues = Array(numberOfDice)
+            .fill(0)
+            .map(() => Math.floor(Math.random() * 6) + 1);
+        setDiceValues(newValues);
+    };
+
+    function Die({ value }: { value: number }) {
+        return (
+            <div className={`dice cursor-pointer`} onClick={rollDice}>
+                <div className="w-16 h-16 bg-white rounded-lg shadow-lg flex items-center justify-center text-2xl font-bold text-gray-800">
+                    {value}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex gap-4 select-none">
+            {diceValues.map((value, index) => (
+                <Die key={index} value={value} />
+            ))}
         </div>
     );
 }
