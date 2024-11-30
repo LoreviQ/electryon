@@ -1,4 +1,4 @@
-import { Partner } from "./routes/_app.partners";
+import type { Partner } from "~/types/partner";
 
 export const PARTNERS_DATA: Partner[] = [
     {

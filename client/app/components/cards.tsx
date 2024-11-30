@@ -1,3 +1,4 @@
+import type { Partner } from "~/types/partner";
 import { Link } from "@remix-run/react";
 
 export function Hero({}) {
@@ -43,5 +44,42 @@ export function FeatureCard({ header, description, icon, iconBgColor = "bg-blue-
             <h3 className="text-xl font-semibold mb-2">{header}</h3>
             <p className="text-gray-400">{description}</p>
         </div>
+    );
+}
+
+export function PartnerCard({ partner }: { partner: Partner }) {
+    return (
+        <Link
+            key={partner.id}
+            to={`/partners/${partner.path_name}`}
+            className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors shadow-lg"
+        >
+            <div className="flex flex-col h-full">
+                <div className="flex justify-center mb-4">
+                    <img src={partner.logo} alt={`${partner.name} logo`} className="w-full object-contain" />
+                </div>
+                <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-center">{partner.name}</h3>
+                    <div className="text-sm text-gray-400 space-y-1">
+                        <div className="flex justify-between">
+                            <span>Market Cap:</span>
+                            <span className="text-gray-200">${(partner.marketCap / 1000000).toFixed(1)}M</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>24h Volume:</span>
+                            <span className="text-gray-200">${(partner.tradeVolume / 1000000).toFixed(1)}M</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Category:</span>
+                            <span className="text-gray-200">{partner.category}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Country:</span>
+                            <span className="text-gray-200">{partner.country}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Link>
     );
 }
