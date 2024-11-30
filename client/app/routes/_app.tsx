@@ -28,7 +28,7 @@ export default function App() {
         <div className={`min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white `}>
             <Header preferences={preferences} username={userData.username} contentWidth={widthClass} />
             <div className={`mx-auto ${widthClass}`}>
-                <div className="flex">
+                <div className="flex h-full">
                     <Sidebar isOpen={preferences.showSidebar} />
                     <main className="flex-1 p-6">
                         <Outlet context={userData} />

@@ -39,7 +39,7 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
         <aside
             className={`${
                 isOpen ? "w-64" : "w-20"
-            } min-h-screen  border-r border-gray-800 transition-all duration-300 ease-in-out`}
+            } h-full border-r border-gray-800 transition-all duration-300 ease-in-out`}
         >
             <div className="px-4 py-6">
                 <nav className="space-y-2">

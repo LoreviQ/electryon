@@ -1,21 +1,19 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
+
+import { Tile } from "~/components/board";
 
 // Dummy data
 const BOARD_TILES = [
-    { id: 0, type: "Go", color: "bg-blue-500", effect: "None", size: "lg" },
-    { id: 1, type: "normal", color: "bg-blue-500", effect: "None", size: "md" },
-    { id: 2, type: "chance", color: "bg-yellow-500", effect: "Draw a card", size: "md" },
-    { id: 3, type: "normal", color: "bg-blue-500", effect: "None", size: "md" },
-    { id: 4, type: "tax", color: "bg-red-500", effect: "Pay tax", size: "md" },
-    { id: 5, type: "normal", color: "bg-blue-500", effect: "None", size: "md" },
-    { id: 6, type: "chest", color: "bg-purple-500", effect: "Open chest", size: "md" },
-    { id: 7, type: "normal", color: "bg-blue-500", effect: "None", size: "md" },
-    { id: 8, type: "chance", color: "bg-yellow-500", effect: "Draw a card", size: "md" },
-    { id: 9, type: "normal", color: "bg-blue-500", effect: "None", size: "md" },
-    { id: 10, type: "normal", color: "bg-blue-500", effect: "None", size: "md" },
-    { id: 11, type: "prison", color: "bg-blue-500", effect: "None", size: "lg" },
+    { id: 0, type: "go", color: "bg-green-400", effect: "None", colSpan: 2 },
+    { id: 1, type: "partner", color: "bg-teal-600", effect: "Obtain Colour Coffee Tokens", colSpan: 1 },
+    { id: 2, type: "chance", color: "bg-yellow-500", effect: "Draw a card", colSpan: 1 },
+    { id: 3, type: "partner", color: "bg-teal-600", effect: "Obtain Colour Coffee Tokens", colSpan: 1 },
+    { id: 4, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
+    { id: 5, type: "community chest", color: "bg-purple-500", effect: "Open chest", colSpan: 1 },
+    { id: 6, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
+    { id: 7, type: "prison", color: "bg-green-400", effect: "TBD", colSpan: 2 },
 ];
 
 function Dice({ value, rolling }: { value: number; rolling: boolean }) {
@@ -43,6 +41,35 @@ export default function Play() {
     const [playerPosition, setPlayerPosition] = useState(initialPosition);
     const [isRolling, setIsRolling] = useState(false);
     const [diceValues, setDiceValues] = useState([1, 1]);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    const boardRef = useRef<HTMLDivElement>(null);
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        setIsDragging(true);
+        setStartX(e.pageX - (boardRef.current?.offsetLeft ?? 0));
+        setScrollLeft(boardRef.current?.scrollLeft ?? 0);
+    };
+
+    const handleMouseLeave = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging) return;
+
+        e.preventDefault();
+        if (!boardRef.current) return;
+
+        const x = e.pageX - boardRef.current.offsetLeft;
+        const walk = (x - startX) * 2;
+        boardRef.current.scrollLeft = scrollLeft - walk;
+    };
 
     const rollDice = () => {
         if (isRolling) return;
@@ -71,19 +98,33 @@ export default function Play() {
             </div>
 
             {/* Game Board */}
-            <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <div className="flex gap-2 mb-8 overflow-x-auto pb-4">
-                    {BOARD_TILES.map((tile, index) => (
-                        <div
-                            key={tile.id}
-                            className={`relative w-20 h-20 ${tile.color} rounded-lg flex items-center justify-center flex-shrink-0`}
-                        >
-                            {playerPosition === index && (
-                                <div className="absolute text-4xl z-10">{playerData.avatar}</div>
-                            )}
-                            <span className="text-sm">{tile.type}</span>
-                        </div>
-                    ))}
+            <div className="bg-gray-800 rounded-lg p-6 shadow-lg w-full">
+                <div
+                    ref={boardRef}
+                    className="overflow-x-auto cursor-grab active:cursor-grabbing scrollbar-hide"
+                    style={{
+                        WebkitMaskImage: "linear-gradient(to right, black 90%, transparent 100%)",
+                    }}
+                >
+                    <div
+                        className="grid grid-flow-col mb-8 pb-4"
+                        style={{
+                            gridAutoColumns: "150px",
+                            width: "fit-content",
+                            minWidth: "100%",
+                        }}
+                    >
+                        {BOARD_TILES.map((tile, index) => (
+                            <Tile
+                                key={index}
+                                type={tile.type}
+                                color={tile.color}
+                                colSpan={tile.colSpan}
+                                showPlayerAvatar={playerPosition === index}
+                                PlayerAvatar={playerData.avatar}
+                            />
+                        ))}
+                    </div>
                 </div>
 
                 {/* Dice Section */}
