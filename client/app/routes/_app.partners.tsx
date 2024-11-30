@@ -1,17 +1,22 @@
 import { json } from "@remix-run/node";
-import { useLoaderData, Link } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 import { FunnelIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-
-import type { Partner } from "~/types/partner";
-import { PARTNERS_DATA } from "~/dummy_data";
 import { PartnerCard } from "~/components/cards";
 
-export async function loader() {
-    // TODO: Replace with actual API call
-    const partners: Partner[] = PARTNERS_DATA;
+import { supabase } from "~/utils/db.server";
 
-    return json({ partners });
+export async function loader() {
+    try {
+        const { data: partners, error } = await supabase.from("partners").select("*");
+
+        if (error) throw error;
+
+        return json({ partners: partners || [] });
+    } catch (error) {
+        console.error("Database error:", error);
+        return json({ partners: [] });
+    }
 }
 
 export default function Partners() {
