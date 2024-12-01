@@ -73,12 +73,12 @@ interface TileProps {
 export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: TileProps) {
     const getIcon = () => {
         switch (type) {
-            case "chance":
+            case "Chance":
                 return <DiceIcon color={color} />;
-            case "chest":
+            case "Community Chest":
                 return <CogIcon color={color} />;
-            case "start":
-            case "prison":
+            case "Go":
+            case "Prison":
                 return <BuildingIcon color={color} />;
             default:
                 return null;
@@ -87,7 +87,7 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
 
     return (
         <div className={`relative h-72 col-span-${colSpan} bg-gray-800 border-2 border-sky-400/80 select-none`}>
-            {type === "partner" ? (
+            {type === "Partner Tile" ? (
                 // Partner tile with color band at top
                 <div className="flex flex-col h-full">
                     <div className={`h-20 ${color}`} />

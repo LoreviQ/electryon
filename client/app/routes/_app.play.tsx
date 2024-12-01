@@ -1,19 +1,28 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
+import { supabase } from "~/utils/db.server";
 import { Board, Dice } from "~/components/board";
 
-const BOARD_TILES = [
-    { id: 0, type: "start", color: "bg-green-400", effect: "None", colSpan: 2 },
-    { id: 1, type: "partner", color: "bg-teal-600", effect: "Obtain Colour Coffee Tokens", colSpan: 1 },
-    { id: 2, type: "chance", color: "bg-yellow-500", effect: "Draw a card", colSpan: 1 },
-    { id: 3, type: "partner", color: "bg-teal-600", effect: "Obtain Colour Coffee Tokens", colSpan: 1 },
-    { id: 4, type: "chest", color: "bg-purple-500", effect: "Open chest", colSpan: 1 },
-    { id: 5, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
-    { id: 6, type: "chance", color: "bg-yellow-500", effect: "Draw a card", colSpan: 1 },
-    { id: 7, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
-    { id: 8, type: "prison", color: "bg-green-400", effect: "TBD", colSpan: 2 },
-];
+type QueryResponse = {
+    data:
+        | {
+              color: string;
+              size: string;
+              order: number;
+              type: {
+                  name: string;
+                  description: string;
+                  partner: {
+                      name: string;
+                      path_name: string;
+                      logo: string;
+                  } | null;
+              };
+          }[]
+        | null;
+    error: any;
+};
 
 export type Tile = {
     id: number;
@@ -21,6 +30,11 @@ export type Tile = {
     color: string;
     effect: string;
     colSpan: number;
+    partner?: {
+        name: string;
+        path_name: string;
+        logo: string;
+    };
 };
 
 export type Board = Tile[];
@@ -32,19 +46,57 @@ export type Player = {
 };
 
 export async function loader() {
-    return json({
-        playerData: {
-            name: "Player 1",
-            avatar: "👤",
-            position: 0,
-        },
-        boardData: BOARD_TILES,
-    });
+    try {
+        const { data: boardTiles, error } = (await supabase
+            .from("boardTiles")
+            .select(
+                `
+                color, size, order, 
+                type: boardTileTypes (
+                    name, description,
+                    partner: partners (
+                        name, path_name, logo
+                    )
+                )`
+            )
+            .eq("season", 1)
+            .order("order")) as QueryResponse;
+        if (error) throw error;
+        const formattedData =
+            boardTiles?.map((tile) => ({
+                id: tile.order,
+                type: tile.type.name,
+                color: tile.color,
+                effect: tile.type.description,
+                colSpan: tile.size === "lg" ? 2 : 1,
+                partner: tile.type.partner || null,
+            })) || [];
+
+        return json({
+            playerData: {
+                name: "Player 1",
+                avatar: "👤",
+                position: 0,
+            },
+            boardData: formattedData,
+        });
+    } catch (error) {
+        console.error("Database error:", error);
+        return json({
+            playerData: {
+                name: "Player 1",
+                avatar: "👤",
+                position: 0,
+            },
+            boardData: [],
+        });
+    }
 }
 
 export default function Play() {
-    const { playerData, boardData } = useLoaderData<typeof loader>();
-
+    const loaderData = useLoaderData<typeof loader>();
+    const playerData = loaderData.playerData as Player;
+    const boardData = loaderData.boardData as Board;
     return (
         <div className="space-y-6 min-w-0">
             <h1 className="text-4xl font-bold text-center">Play</h1>
