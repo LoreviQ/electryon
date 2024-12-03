@@ -47,48 +47,7 @@ impl Processor {
         Ok(())
     }
 
-    pub fn process_mint_tokens(
-        accounts: &[AccountInfo],
-        amount: u64,
-        recipient: &Pubkey,
-        program_id: &Pubkey,
-    ) -> ProgramResult {
-        let accounts_iter = &mut accounts.iter();
-        let vault = next_account_info(accounts_iter)?;
-        let token_mint = next_account_info(accounts_iter)?;
-        let recipient_ata = next_account_info(accounts_iter)?;
-        
-        // Read vault state
-        let mut vault_data = TokenVault::try_from_slice(&vault.data.borrow())?;
-        
-        // Check if mint is allowed based on collateral
-        let max_tokens = vault_data.collateral.checked_mul(vault_data.min_collateral_ratio)
-            .ok_or(ProgramError::Overflow)?;
-        if vault_data.tokens_issued.checked_add(amount).unwrap() > max_tokens {
-            return Err(ProgramError::InsufficientFunds);
-        }
-        
-        // Mint tokens
-        invoke_signed(
-            &spl_token::instruction::mint_to(
-                token_program.key,
-                token_mint.key,
-                recipient_ata.key,
-                vault.key,
-                &[],
-                amount,
-            )?,
-            &[token_mint.clone(), recipient_ata.clone(), vault.clone()],
-            &[&[b"vault", &[bump_seed]]],
-        )?;
-        
-        // Update vault state
-        vault_data.tokens_issued = vault_data.tokens_issued.checked_add(amount)
-            .ok_or(ProgramError::Overflow)?;
-        vault_data.serialize(&mut *vault.data.borrow_mut())?;
-        
-        Ok(())
-    }
+    
     pub fn process_deposit_collateral(
         accounts: &[AccountInfo],
         amount: u64,
@@ -189,6 +148,49 @@ impl Processor {
         vault_data.collateral = remaining_collateral;
         vault_data.serialize(&mut *vault.data.borrow_mut())?;
 
+        Ok(())
+    }
+
+    pub fn process_mint_tokens(
+        accounts: &[AccountInfo],
+        amount: u64,
+        recipient: &Pubkey,
+        program_id: &Pubkey,
+    ) -> ProgramResult {
+        let accounts_iter = &mut accounts.iter();
+        let vault = next_account_info(accounts_iter)?;
+        let token_mint = next_account_info(accounts_iter)?;
+        let recipient_ata = next_account_info(accounts_iter)?;
+        
+        // Read vault state
+        let mut vault_data = TokenVault::try_from_slice(&vault.data.borrow())?;
+        
+        // Check if mint is allowed based on collateral
+        let max_tokens = vault_data.collateral.checked_mul(vault_data.min_collateral_ratio)
+            .ok_or(ProgramError::Overflow)?;
+        if vault_data.tokens_issued.checked_add(amount).unwrap() > max_tokens {
+            return Err(ProgramError::InsufficientFunds);
+        }
+        
+        // Mint tokens
+        invoke_signed(
+            &spl_token::instruction::mint_to(
+                token_program.key,
+                token_mint.key,
+                recipient_ata.key,
+                vault.key,
+                &[],
+                amount,
+            )?,
+            &[token_mint.clone(), recipient_ata.clone(), vault.clone()],
+            &[&[b"vault", &[bump_seed]]],
+        )?;
+        
+        // Update vault state
+        vault_data.tokens_issued = vault_data.tokens_issued.checked_add(amount)
+            .ok_or(ProgramError::Overflow)?;
+        vault_data.serialize(&mut *vault.data.borrow_mut())?;
+        
         Ok(())
     }
 }

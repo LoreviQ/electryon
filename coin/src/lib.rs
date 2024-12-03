@@ -46,6 +46,11 @@ pub fn process_instruction(
         StablecoinInstruction::DepositCollateral { amount } => {
             Processor::process_deposit_collateral(accounts, amount, program_id)
         },
-        // ... other instruction handlers
+        TokenInstruction::WithdrawCollateral { amount } => {
+            Processor::process_withdraw_collateral(accounts, amount, program_id)
+        },
+        TokenInstruction::MintTokens { amount, recipient } => {
+            Processor::process_mint_tokens(accounts, amount, recipient, program_id)
+        },
     }
 }
