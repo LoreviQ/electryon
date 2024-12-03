@@ -24,11 +24,6 @@ pub enum TokenInstruction {
         amount: u64,
         recipient: Pubkey 
     },
-    DistributeReward {
-        amount: u64,
-        recipient: Pubkey,
-        game_signature: [u8; 64]  // For verification of game results
-    },
     WithdrawCollateral { 
         amount: u64 
     },
