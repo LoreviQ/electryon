@@ -9,6 +9,44 @@ use crate::state::StablecoinVault;
 pub struct Processor {}
 
 impl Processor {
+    pub fn process_initialize_vault(
+        accounts: &[AccountInfo],
+        min_collateral_ratio: u64,
+        program_id: &Pubkey,
+    ) -> ProgramResult {
+        let accounts_iter = &mut accounts.iter();
+        let vault_account = next_account_info(accounts_iter)?;
+        let token_mint = next_account_info(accounts_iter)?;
+        let payer = next_account_info(accounts_iter)?;
+        let system_program = next_account_info(accounts_iter)?;
+        let token_program = next_account_info(accounts_iter)?;
+        let rent = Rent::get()?;
+
+        // Create vault
+        let vault = TokenVault {
+            owner: *payer.key,
+            collateral: 0,
+            tokens_issued: 0,
+            min_collateral_ratio,
+            price: 0,
+        };
+
+        // Create token mint
+        invoke(
+            &token_instruction::initialize_mint(
+                token_program.key,
+                token_mint.key,
+                payer.key,
+                Some(payer.key),
+                9, // decimals
+            )?,
+            &[token_mint.clone(), rent.to_account_info(), payer.clone()],
+        )?;
+
+        vault.serialize(&mut *vault_account.data.borrow_mut())?;
+        Ok(())
+    }
+    
     pub fn process_mint_tokens(
         accounts: &[AccountInfo],
         amount: u64,
