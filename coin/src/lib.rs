@@ -13,12 +13,25 @@ mod state;
 use processor::Processor;
 
 #[derive(BorshSerialize, BorshDeserialize)]
-pub enum StablecoinInstruction {
-    InitializeVault,                        // Create new vault
-    DepositCollateral { amount: u64 },      // Deposit BTC collateral
-    MintStablecoin { amount: u64 },         // Create new stablecoins
-    RedeemStablecoin { amount: u64 },       // Redeem stablecoins for BTC
-    WithdrawCollateral { amount: u64 },     // Withdraw BTC collateral
+pub enum TokenInstruction {
+    InitializeVault {
+        min_collateral_ratio: u64
+    },
+    DepositCollateral { 
+        amount: u64 
+    },
+    MintTokens { 
+        amount: u64,
+        recipient: Pubkey 
+    },
+    DistributeReward {
+        amount: u64,
+        recipient: Pubkey,
+        game_signature: [u8; 64]  // For verification of game results
+    },
+    WithdrawCollateral { 
+        amount: u64 
+    },
 }
 
 entrypoint!(process_instruction);
