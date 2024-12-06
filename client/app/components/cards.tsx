@@ -50,55 +50,60 @@ export function FeatureCard({ header, description, icon, iconBgColor = "bg-blue-
 
 export function PartnerCard({ partner }: { partner: Partner }) {
     return (
-        <Link
-            key={partner.id}
-            to={`/partners/${partner.path_name}`}
-            className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors shadow-lg"
-        >
-            <div className="flex flex-col h-full">
-                <div className="flex justify-center mb-4">
-                    <img src={partner.logo} alt={`${partner.name} logo`} className="w-full object-contain" />
-                </div>
-                <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-center">{partner.name}</h3>
-                    <div className="text-sm text-gray-400 space-y-1">
-                        <div className="flex justify-between">
-                            <span>Market Cap:</span>
-                            <span className="text-gray-200">${(partner.market_cap / 1000000).toFixed(1)}M</span>
+        <div className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors shadow-lg">
+            <div className="relative">
+                <Link key={partner.id} to={`/partners/${partner.path_name}`}>
+                    <div className="flex flex-col h-full">
+                        <div className="flex justify-center mb-4">
+                            <img src={partner.logo} alt={`${partner.name} logo`} className="w-full object-contain" />
                         </div>
-                        <div className="flex justify-between">
-                            <span>24h Volume:</span>
-                            <span className="text-gray-200">${(partner.trade_volume / 1000000).toFixed(1)}M</span>
+                        <div className="space-y-2">
+                            <h3 className="text-lg font-semibold text-center">{partner.name}</h3>
+                            <div className="text-sm text-gray-400 space-y-1">
+                                <div className="flex justify-between">
+                                    <span>Market Cap:</span>
+                                    <span className="text-gray-200">${(partner.market_cap / 1000000).toFixed(1)}M</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>24h Volume:</span>
+                                    <span className="text-gray-200">
+                                        ${(partner.trade_volume / 1000000).toFixed(1)}M
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className="flex gap-2 mt-2">
-                        <a
-                            href={partner.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
-                        >
-                            <GlobeIcon color="text-gray-200" />
-                        </a>
-                        <a
-                            href={partner.twitter}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
-                        >
-                            <TwitterIcon color="text-gray-200" />
-                        </a>
-                        <a
-                            href={partner.telegram}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
-                        >
-                            <TelegramIcon color="text-gray-200" />
-                        </a>
-                    </div>
+                </Link>
+                <div className="flex gap-2 mt-2">
+                    <a
+                        href={partner.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <GlobeIcon color="text-gray-200" />
+                    </a>
+                    <a
+                        href={partner.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <TwitterIcon color="text-gray-200" />
+                    </a>
+                    <a
+                        href={partner.telegram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <TelegramIcon color="text-gray-200" />
+                    </a>
                 </div>
             </div>
-        </Link>
+        </div>
     );
 }
