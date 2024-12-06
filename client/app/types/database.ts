@@ -27,8 +27,8 @@ export type Partner = {
     season: number;
     logo: string;
     description: string;
-    marketCap: number;
-    tradeVolume: number;
+    market_cap: number;
+    trade_volume: number;
     category: string;
     country: string;
     website: string;
