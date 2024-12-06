@@ -20,12 +20,12 @@ pub enum TokenInstruction {
     DepositCollateral { 
         amount: u64 
     },
+    WithdrawCollateral { 
+        amount: u64 
+    },
     MintTokens { 
         amount: u64,
         recipient: Pubkey 
-    },
-    WithdrawCollateral { 
-        amount: u64 
     },
 }
 
