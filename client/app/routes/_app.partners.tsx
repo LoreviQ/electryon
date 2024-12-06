@@ -58,7 +58,7 @@ export default function Partners() {
             </div>
 
             {/* Partners Grid */}
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6">
                 {partners.map((partner) => (
                     <PartnerCard key={partner.id} partner={partner} />
                 ))}
