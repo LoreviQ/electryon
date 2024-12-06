@@ -74,24 +74,24 @@ export default function Login() {
     }
 
     return (
-        <div className="w-full max-w-md p-8 rounded-xl bg-gray-800 border border-gray-700">
+        <div className="w-full max-w-md p-8 rounded-xl bg-gray-800 border border-gray-700 space-y-4 justify-center items-center">
             <h3 className="text-2xl text-center font-semibold mb-6">Connect Wallet</h3>
 
-            <div className="space-y-4">
-                <WalletMultiButton className="w-full" />
-
-                {wallet.connected && (
-                    <Form method="post">
-                        <button
-                            type="button"
-                            onClick={handleSign}
-                            className="w-full mt-6 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-semibold transition-colors"
-                        >
-                            Sign to Login
-                        </button>
-                    </Form>
-                )}
+            <div className="flex justify-center w-full">
+                <WalletMultiButton />
             </div>
+
+            {wallet.connected && (
+                <Form method="post" className="w-full">
+                    <button
+                        type="button"
+                        onClick={handleSign}
+                        className="w-full mt-6 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-semibold transition-colors"
+                    >
+                        Sign to Login
+                    </button>
+                </Form>
+            )}
         </div>
     );
 }
