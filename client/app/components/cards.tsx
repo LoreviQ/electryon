@@ -58,7 +58,9 @@ export function PartnerCard({ partner }: { partner: Partner }) {
                             <img src={partner.logo} alt={`${partner.name} logo`} className="w-full object-contain" />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-lg font-semibold text-center">{partner.name}</h3>
+                            <h3 className="text-lg font-semibold text-center min-h-[calc(theme(lineHeight.6)*2)] flex items-center justify-center">
+                                {partner.name}
+                            </h3>
                             <div className="text-sm text-gray-400 space-y-1">
                                 <div className="flex justify-between">
                                     <span>Market Cap:</span>
