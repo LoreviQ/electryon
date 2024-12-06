@@ -13,9 +13,10 @@ export const authStorage = createCookieSessionStorage({
 });
 
 export type AuthCookie = {
-    userid: string;
     username: string;
+    walletAddress: string;
     authenticated: boolean;
+    lastLogin: string;
 };
 
 // Cookie for storing user preferences

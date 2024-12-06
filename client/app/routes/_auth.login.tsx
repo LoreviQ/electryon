@@ -1,24 +1,40 @@
-import { Form } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
+import { Form, useSubmit } from "@remix-run/react";
+import { redirect, json } from "@remix-run/node";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { PublicKey } from "@solana/web3.js";
+import nacl from "tweetnacl";
 
 import type { AuthCookie } from "~/utils/cookies";
 import { authStorage } from "~/utils/cookies";
 
+const message = "Sign this message to authenticate";
+
 export async function action({ request }: { request: Request }) {
+    const formData = await request.formData();
+    const walletAddress = formData.get("walletAddress");
+    const signature = formData.get("signature");
+    if (!walletAddress || !signature) {
+        return json({ error: "Missing required fields" }, { status: 400 });
+    }
+
     try {
-        const formData = await request.formData();
-        const username = formData.get("username");
-        const password = formData.get("password");
-        if (!username || !password || typeof username !== "string" || typeof password !== "string") {
-            return null;
-        }
+        // Verify signature
+        const publicKey = new PublicKey(walletAddress);
+        const signatureUint8 = new Uint8Array(Buffer.from(signature as string, "hex"));
+        const messageUint8 = new TextEncoder().encode(message as string);
+        const isValid = nacl.sign.detached.verify(messageUint8, signatureUint8, publicKey.toBytes());
+        if (!isValid) throw new Error("Invalid signature");
+
+        // Set cookie
         const session = await authStorage.getSession();
-        const userData: AuthCookie = {
-            userid: "1",
-            username,
+        const cookie: AuthCookie = {
+            username: walletAddress.slice(0, 4) + "..." + walletAddress.slice(-4),
+            walletAddress: walletAddress as string,
             authenticated: true,
+            lastLogin: new Date().toISOString(),
         };
-        session.set("user", userData);
+        session.set("user", cookie);
         return redirect("/dashboard", {
             headers: {
                 "Set-Cookie": await authStorage.commitSession(session),
@@ -31,49 +47,51 @@ export async function action({ request }: { request: Request }) {
 }
 
 export default function Login() {
+    const wallet = useWallet();
+    const submit = useSubmit();
+
+    async function handleSign() {
+        if (!wallet.connected || !wallet.publicKey || !wallet.signMessage) {
+            console.error("Wallet not connected or signMessage not available");
+            return;
+        }
+
+        const encodedMessage = new TextEncoder().encode(message);
+
+        try {
+            const signature = await wallet.signMessage(encodedMessage);
+
+            submit(
+                {
+                    walletAddress: wallet.publicKey.toString(),
+                    signature: Buffer.from(signature).toString("hex"),
+                },
+                { method: "post" }
+            );
+        } catch (error) {
+            console.error("Failed to sign message:", error);
+        }
+    }
+
     return (
-        <Form method="post" className="w-full max-w-md p-8 rounded-xl bg-gray-800 border border-gray-700">
-            <h3 className="text-2xl text-center font-semibold mb-6">Welcome Back</h3>
+        <div className="w-full max-w-md p-8 rounded-xl bg-gray-800 border border-gray-700">
+            <h3 className="text-2xl text-center font-semibold mb-6">Connect Wallet</h3>
+
             <div className="space-y-4">
-                <div>
-                    <label htmlFor="username" className="block text-sm font-medium text-gray-400 mb-1">
-                        Username
-                    </label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 text-white"
-                        placeholder="Enter your username"
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 text-white"
-                        placeholder="Enter your password"
-                        required
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="w-full mt-6 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-semibold transition-colors"
-                >
-                    Login
-                </button>
+                <WalletMultiButton className="w-full" />
+
+                {wallet.connected && (
+                    <Form method="post">
+                        <button
+                            type="button"
+                            onClick={handleSign}
+                            className="w-full mt-6 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-semibold transition-colors"
+                        >
+                            Sign to Login
+                        </button>
+                    </Form>
+                )}
             </div>
-            <div className="mt-6 text-center text-sm text-gray-400">
-                Don't have an account?{" "}
-                <a href="/register" className="text-blue-400 hover:underline">
-                    Sign up
-                </a>
-            </div>
-        </Form>
+        </div>
     );
 }
