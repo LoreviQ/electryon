@@ -84,30 +84,23 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
                 return null;
         }
     };
-    console.log(PlayerAvatar);
+    console.log(type, color);
 
     return (
         <div className={`relative h-72 col-span-${colSpan} bg-gray-800 border-2 border-sky-400/80 select-none`}>
-            {type === "Partner Tile" ? (
-                // Partner tile with color band at top
-                <div className="flex flex-col h-full">
-                    <div className={`h-20 ${color}`} />
-                    <div className="flex-1 flex items-center justify-center">
-                        <span className="text-sm">{type}</span>
-                        {showPlayerAvatar && PlayerAvatar && (
-                            <img
-                                src={PlayerAvatar}
-                                alt="Player"
-                                className="absolute w-12 h-12 z-10 rounded-full object-cover"
-                            />
-                        )}
-                    </div>
-                </div>
-            ) : (
-                // Other tile types with centered icon and text
-                <div className="h-full flex flex-col items-center justify-center gap-2">
-                    {getIcon()}
+            <div className="h-full flex flex-col">
+                {/* Color block for Partner Tile */}
+                {type === "Partner Tile" && <div className={`h-20 ${color}`} />}
+
+                {/* Tile content */}
+                <div className="flex-1 flex flex-col items-center justify-center gap-2">
+                    {/* Tile name */}
                     <span className="text-sm">{type}</span>
+
+                    {/* Icon */}
+                    {getIcon()}
+
+                    {/* Player Avatar */}
                     {showPlayerAvatar && PlayerAvatar && (
                         <img
                             src={PlayerAvatar}
@@ -116,7 +109,7 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
                         />
                     )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
