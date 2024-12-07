@@ -75,7 +75,7 @@ export async function loader() {
         return json({
             playerData: {
                 name: "Player 1",
-                avatar: "👤",
+                avatar: "/images/default-avatar.png",
                 position: 0,
             },
             boardData: formattedData,
@@ -85,7 +85,7 @@ export async function loader() {
         return json({
             playerData: {
                 name: "Player 1",
-                avatar: "👤",
+                avatar: "/images/default-avatar.png",
                 position: 0,
             },
             boardData: [],

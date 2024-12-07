@@ -84,6 +84,7 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
                 return null;
         }
     };
+    console.log(PlayerAvatar);
 
     return (
         <div className={`relative h-72 col-span-${colSpan} bg-gray-800 border-2 border-sky-400/80 select-none`}>
@@ -93,7 +94,13 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
                     <div className={`h-20 ${color}`} />
                     <div className="flex-1 flex items-center justify-center">
                         <span className="text-sm">{type}</span>
-                        {showPlayerAvatar && <div className="absolute text-4xl z-10">{PlayerAvatar}</div>}
+                        {showPlayerAvatar && PlayerAvatar && (
+                            <img
+                                src={PlayerAvatar}
+                                alt="Player"
+                                className="absolute w-12 h-12 z-10 rounded-full object-cover"
+                            />
+                        )}
                     </div>
                 </div>
             ) : (
@@ -101,7 +108,13 @@ export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: T
                 <div className="h-full flex flex-col items-center justify-center gap-2">
                     {getIcon()}
                     <span className="text-sm">{type}</span>
-                    {showPlayerAvatar && <div className="absolute text-4xl z-10">{PlayerAvatar}</div>}
+                    {showPlayerAvatar && PlayerAvatar && (
+                        <img
+                            src={PlayerAvatar}
+                            alt="Player"
+                            className="absolute w-12 h-12 z-10 rounded-full object-cover"
+                        />
+                    )}
                 </div>
             )}
         </div>
