@@ -1,7 +1,6 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { supabase } from "~/utils/db.server";
-import type { Partner } from "~/types/database";
 
 export async function loader({ params }: LoaderFunctionArgs) {
     try {

@@ -51,3 +51,10 @@ export type BoardTileType = {
     description: string;
     partners: Partner | null;
 };
+
+export type Token = {
+    mint: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+}

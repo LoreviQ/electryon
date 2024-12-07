@@ -16,6 +16,7 @@
     "@remix-run/node": "2.13.0",
     "@remix-run/react": "2.13.0",
     "@remix-run/serve": "2.13.0",
+    "@solana/spl-token": "^0.4.9",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.35",
