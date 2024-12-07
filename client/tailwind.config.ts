@@ -3,11 +3,12 @@ import type { Config } from "tailwindcss";
 export default {
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
   safelist: [
+    "text-red-600",
     'bg-teal-600',
-    "bg-purple-500",
-    "bg-yellow-500",
+    "text-purple-500",
+    "text-yellow-500",
     "bg-indigo-800",
-    "bg-amber-500",
+    "text-amber-500",
   ],
   theme: {
     extend: {

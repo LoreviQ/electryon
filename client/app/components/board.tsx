@@ -1,7 +1,7 @@
-import { BuildingIcon, DiceIcon, CogIcon } from "./icons";
+import { BuildingIcon, DiceIcon, CogIcon, ChanceIcon, CommunityChestIcon, GoIcon, PrisonIcon } from "./icons";
 import { useState, useRef } from "react";
 
-import type { Board, Player } from "~/routes/_app.play";
+import type { Board, Player, Tile } from "~/routes/_app.play";
 
 interface BoardProps {
     boardData: Board;
@@ -50,9 +50,7 @@ export function Board({ boardData, playerData }: BoardProps) {
                 {boardData.map((tile, index) => (
                     <Tile
                         key={index}
-                        type={tile.type}
-                        color={tile.color}
-                        colSpan={tile.colSpan}
+                        tile={tile}
                         showPlayerAvatar={playerData.position === index}
                         PlayerAvatar={playerData.avatar}
                     />
@@ -63,39 +61,41 @@ export function Board({ boardData, playerData }: BoardProps) {
 }
 
 interface TileProps {
-    type: string;
-    color: string;
-    colSpan: number;
+    tile: Tile;
     showPlayerAvatar?: boolean;
     PlayerAvatar?: string;
 }
 
-export function Tile({ type, color, colSpan, showPlayerAvatar, PlayerAvatar }: TileProps) {
+export function Tile({ tile, showPlayerAvatar, PlayerAvatar }: TileProps) {
     const getIcon = () => {
-        switch (type) {
+        switch (tile.type) {
             case "Chance":
-                return <DiceIcon color={color} />;
+                return <ChanceIcon color={tile.color} width="w-24" height="h-24" />;
             case "Community Chest":
-                return <CogIcon color={color} />;
+                return <CommunityChestIcon color={tile.color} width="w-24" height="h-24" />;
             case "Go":
+                return <GoIcon color={tile.color} width="w-24" height="h-24" />;
             case "Prison":
-                return <BuildingIcon color={color} />;
+                return <PrisonIcon color={tile.color} width="w-24" height="h-24" />;
             default:
-                return null;
+                return tile.partner ? (
+                    <div className="p-2">
+                        <img src={tile.partner.logo} alt="Partner" className="w-full rounded-lg" />
+                    </div>
+                ) : null;
         }
     };
-    console.log(type, color);
 
     return (
-        <div className={`relative h-72 col-span-${colSpan} bg-gray-800 border-2 border-sky-400/80 select-none`}>
+        <div className={`relative h-72 col-span-${tile.colSpan} bg-gray-800 border-2 border-sky-400/80 select-none`}>
             <div className="h-full flex flex-col">
                 {/* Color block for Partner Tile */}
-                {type === "Partner Tile" && <div className={`h-20 ${color}`} />}
+                {tile.type === "Partner Tile" && <div className={`h-20 ${tile.color}`} />}
 
                 {/* Tile content */}
                 <div className="flex-1 flex flex-col items-center justify-center gap-2">
                     {/* Tile name */}
-                    <span className="text-sm">{type}</span>
+                    <span className="text-sm">{tile.partner ? tile.partner.name : tile.type}</span>
 
                     {/* Icon */}
                     {getIcon()}
