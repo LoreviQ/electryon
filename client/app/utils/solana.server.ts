@@ -3,12 +3,15 @@ import { mintTo, getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import { 
     Metaplex, 
     keypairIdentity, 
-    toMetaplexFile,
     irysStorage 
 } from "@metaplex-foundation/js";
 import bs58 from "bs58"; 
 
-const SOLANA_RPC_URL = process.env.SOLANA_RPC_URL || "https://api.devnet.solana.com";
+import { promises as fs } from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+
+const SOLANA_RPC_URL = "https://api.devnet.solana.com";
 const PAYER_SECRET_KEY = process.env.PAYER_SECRET_KEY || "";
 
 export async function mintTokenToPlayer(
@@ -111,31 +114,38 @@ export async function uploadMetadata(
     imageBuffer: Buffer
 ) {
     try {
-        const connection = new Connection(SOLANA_RPC_URL, "confirmed");
-        const payerKeypair = Keypair.fromSecretKey(bs58.decode(PAYER_SECRET_KEY));
-
-        const metaplex = Metaplex.make(connection)
-            .use(keypairIdentity(payerKeypair))
-            .use(irysStorage({
-                address: 'https://devnet.bundlr.network',
-                providerUrl: SOLANA_RPC_URL,
-                timeout: 60000,
-            }));
-
-        // Upload image
-        const imageFile = toMetaplexFile(imageBuffer, 'nft.png');
-        const imageUri = await metaplex.storage().upload(imageFile);
-
-        // Upload metadata
-        const { uri } = await metaplex.nfts().uploadMetadata({
-            name: name,
-            description: description,
-            image: imageUri,
-        });
-
-        return uri;
+        // Generate unique filename
+        const imageHash = crypto.createHash('md5').update(imageBuffer).digest('hex');
+        const imageFilename = `${imageHash}.png`;
+        
+        // Define paths (adjust the public path according to your Remix setup)
+        const publicDir = path.join(process.cwd(), 'assets', 'nft-gen');
+        const imagePath = path.join(publicDir, imageFilename);
+        
+        // Ensure directory exists
+        await fs.mkdir(publicDir, { recursive: true });
+        
+        // Save image file
+        await fs.writeFile(imagePath, imageBuffer);
+        
+        // Create metadata with local URL
+        // Adjust the URL based on your deployment setup
+        const imageUrl = `/nft-assets/${imageFilename}`;
+        const metadata = {
+            name,
+            description,
+            image: imageUrl,
+        };
+        
+        // Save metadata file
+        const metadataFilename = `${imageHash}-metadata.json`;
+        const metadataPath = path.join(publicDir, metadataFilename);
+        await fs.writeFile(metadataPath, JSON.stringify(metadata));
+        
+        // Return the metadata URL
+        return `/nft-assets/${metadataFilename}`;
     } catch (error) {
-        console.error("Error uploading metadata:", error);
+        console.error("Error saving files:", error);
         throw error;
     }
 }
