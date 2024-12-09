@@ -1,7 +1,8 @@
 import { ChanceIcon, CommunityChestIcon, GoIcon, PrisonIcon } from "./icons";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import type { Board, Player, Tile } from "~/routes/_app.play";
+import { useFetcher } from "@remix-run/react";
 
 interface BoardProps {
     boardData: Board;
@@ -113,16 +114,22 @@ export function Tile({ tile, showPlayerAvatar, PlayerAvatar }: TileProps) {
         </div>
     );
 }
-
+interface DiceResponse {
+    diceValues: number[];
+}
 export function Dice({ numberOfDice = 2 }: { numberOfDice?: number }) {
+    const fetcher = useFetcher<DiceResponse>();
     const [diceValues, setDiceValues] = useState(Array(numberOfDice).fill(1));
 
     const rollDice = () => {
-        const newValues = Array(numberOfDice)
-            .fill(0)
-            .map(() => Math.floor(Math.random() * 6) + 1);
-        setDiceValues(newValues);
+        fetcher.submit({ numberOfDice: numberOfDice.toString() }, { method: "POST", action: "/roll-dice" });
     };
+
+    useEffect(() => {
+        if (fetcher.data?.diceValues) {
+            setDiceValues(fetcher.data.diceValues);
+        }
+    }, [fetcher.data]);
 
     function Die({ value }: { value: number }) {
         return (
