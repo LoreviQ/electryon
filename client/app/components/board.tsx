@@ -1,4 +1,4 @@
-import { BuildingIcon, DiceIcon, CogIcon, ChanceIcon, CommunityChestIcon, GoIcon, PrisonIcon } from "./icons";
+import { ChanceIcon, CommunityChestIcon, GoIcon, PrisonIcon } from "./icons";
 import { useState, useRef } from "react";
 
 import type { Board, Player, Tile } from "~/routes/_app.play";

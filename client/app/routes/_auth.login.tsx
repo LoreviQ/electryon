@@ -7,6 +7,7 @@ import nacl from "tweetnacl";
 
 import type { AuthCookie } from "~/utils/cookies";
 import { authStorage } from "~/utils/cookies";
+import { supabase } from "~/utils/db.server";
 
 const message = "Sign this message to authenticate";
 
@@ -25,11 +26,37 @@ export async function action({ request }: { request: Request }) {
         const messageUint8 = new TextEncoder().encode(message as string);
         const isValid = nacl.sign.detached.verify(messageUint8, signatureUint8, publicKey.toBytes());
         if (!isValid) throw new Error("Invalid signature");
+        let username = walletAddress.slice(0, 4) + "..." + walletAddress.slice(-4);
+
+        // Try to fetch existing user
+        const { data: existingUser, error: fetchError } = await supabase
+            .from("users")
+            .select("username")
+            .eq("wallet_address", walletAddress)
+            .single();
+        if (fetchError && fetchError.code !== "PGRST116") {
+            // PGRST116 is "not found" error, throws all errors except this
+            throw fetchError;
+        }
+        if (existingUser) {
+            // Use existing username if user exists
+            username = existingUser.username;
+        } else {
+            // Create new user if doesn't exist
+            const { error: insertError } = await supabase.from("users").insert([
+                {
+                    wallet_address: walletAddress,
+                    username: username,
+                },
+            ]);
+
+            if (insertError) throw insertError;
+        }
 
         // Set cookie
         const session = await authStorage.getSession();
         const cookie: AuthCookie = {
-            username: walletAddress.slice(0, 4) + "..." + walletAddress.slice(-4),
+            username,
             walletAddress: walletAddress as string,
             authenticated: true,
             lastLogin: new Date().toISOString(),

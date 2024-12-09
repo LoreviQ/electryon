@@ -20,6 +20,12 @@ export type Database = {
     }
 }
 
+export type User = {
+    id: number;
+    wallet_address: string;
+    username: string;
+}
+
 export type Partner = {
     id: number;
     name: string;
