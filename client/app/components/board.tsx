@@ -51,7 +51,7 @@ export function Board({ boardData, playerData }: BoardProps) {
                     <Tile
                         key={index}
                         tile={tile}
-                        showPlayerAvatar={playerData.position === index}
+                        showPlayerAvatar={playerData.position % boardData.length === index}
                         PlayerAvatar={playerData.avatar}
                     />
                 ))}
