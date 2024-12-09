@@ -123,7 +123,7 @@ export function Dice({ numberOfDice = 2 }: { numberOfDice?: number }) {
     const [diceValues, setDiceValues] = useState(Array(numberOfDice).fill(1));
 
     const rollDice = () => {
-        fetcher.submit({ numberOfDice: numberOfDice.toString() }, { method: "POST", action: "/roll-dice" });
+        fetcher.submit({ numberOfDice: numberOfDice.toString() }, { method: "POST", action: "/api/roll-dice" });
     };
 
     useEffect(() => {
