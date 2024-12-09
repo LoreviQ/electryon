@@ -1,25 +1,13 @@
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useState, useEffect } from "react";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { supabase } from "~/utils/db.server";
 
 import type { Token } from "~/types/database";
-
-// Constants
-const METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
-const TOKEN_1: Token = {
-    mint: "C42DzRihK7jiWNMExgaTsA6swHnDhneH15nvki3b8QSM",
-    name: "Colour Coffee",
-    symbol: "CoCo",
-    decimals: 6,
-};
-const TOKEN_2: Token = {
-    mint: "9vgggkNR4wXDHinLXeeAXWpWtJnHa5hEe2RcmJ76PqWr",
-    name: "Page Turners",
-    symbol: "pTURN",
-    decimals: 6,
-};
-const TOKENS = [TOKEN_1, TOKEN_2];
 
 // Types
 interface TokenBalance {
@@ -31,6 +19,29 @@ interface NFT {
     name: string;
     image: string;
     mint: string;
+}
+
+export async function loader() {
+    try {
+        const { data: partners, error } = await supabase
+            .from("partners")
+            .select("name, coin_symbol, coin_decimals, coin_mint")
+            .not("coin_mint", "is", null);
+
+        if (error) throw error;
+
+        const tokens: Token[] = partners.map((partner) => ({
+            mint: partner.coin_mint,
+            name: partner.name,
+            symbol: partner.coin_symbol,
+            decimals: partner.coin_decimals,
+        }));
+
+        return json({ tokens });
+    } catch (error) {
+        console.error("Database error:", error);
+        return json({ tokens: [] as Token[] });
+    }
 }
 
 // Helper functions
@@ -64,9 +75,10 @@ async function fetchTokenBalances(connection: any, publicKey: PublicKey) {
 export default function Dashboard() {
     const { connection } = useConnection();
     const { publicKey } = useWallet();
+    const { tokens } = useLoaderData<typeof loader>();
     const [solBalance, setSolBalance] = useState<number | null>(null);
     const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>(
-        TOKENS.map((config) => ({ config, balance: null }))
+        tokens.map((config) => ({ config, balance: null }))
     );
     const [nfts, setNfts] = useState<NFT[]>([]);
 
@@ -105,7 +117,7 @@ export default function Dashboard() {
         <div className="p-4">
             <h2 className="text-2xl font-bold mb-4">Wallet Balances</h2>
 
-            <div className="space-y-4">
+            <div className="">
                 <div className="p-4 border rounded">
                     <h3 className="font-semibold">SOL Balance</h3>
                     <p>{solBalance !== null ? `${solBalance.toFixed(4)} SOL` : "Loading..."}</p>
@@ -113,10 +125,8 @@ export default function Dashboard() {
 
                 {tokenBalances.map(({ config, balance }) => (
                     <div key={config.mint} className="p-4 border rounded">
-                        <h3 className="font-semibold">
-                            {config.name} ({config.symbol})
-                        </h3>
-                        <p>{balance !== null ? balance.toFixed(4) : "Loading..."}</p>
+                        <h3 className="font-semibold">{config.name}</h3>
+                        <p>{balance !== null ? `${balance.toFixed(4)} ${config.symbol}` : "Loading..."}</p>
                         <p className="text-sm text-gray-500">Mint: {config.mint}</p>
                     </div>
                 ))}
