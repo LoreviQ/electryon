@@ -2,6 +2,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
+import type { Tile, Player } from "~/types/board";
 import { supabase } from "~/utils/db.server";
 import { Board, Dice } from "~/components/board";
 import { authStorage } from "~/utils/cookies";
@@ -24,27 +25,6 @@ type QueryResponse = {
           }[]
         | null;
     error: any;
-};
-
-export type Tile = {
-    id: number;
-    type: string;
-    color: string;
-    effect: string;
-    colSpan: number;
-    partner?: {
-        name: string;
-        path_name: string;
-        logo: string;
-    };
-};
-
-export type Board = Tile[];
-
-export type Player = {
-    name: string;
-    avatar: string;
-    position: number;
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -138,7 +118,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Play() {
     const loaderData = useLoaderData<typeof loader>();
     const playerData = loaderData.playerData as Player;
-    const boardData = loaderData.boardData as Board;
+    const boardData = loaderData.boardData as Tile[];
     return (
         <div className="space-y-6 min-w-0">
             <h1 className="text-4xl font-bold text-center">Play</h1>

@@ -4,6 +4,8 @@ import { supabase } from "~/utils/db.server";
 import { authStorage } from "~/utils/cookies";
 import { mintTokenToPlayer } from "~/utils/solana.server";
 
+import type { EventResult } from "~/types/board";
+
 type Tile = {
     id: number;
     type: {
@@ -21,11 +23,6 @@ type Tile = {
 type QueryResponse = {
     data: Tile[] | null;
     error: any;
-};
-
-export type EventResult = {
-    result: string;
-    signature: string;
 };
 
 export const action: ActionFunction = async ({ request }) => {

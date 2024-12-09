@@ -1,12 +1,11 @@
 import { ChanceIcon, CommunityChestIcon, GoIcon, PrisonIcon } from "./icons";
 import { useState, useRef, useEffect } from "react";
 
-import type { Board, Player, Tile } from "~/routes/_app.play";
+import type { Player, Tile, EventResult } from "~/types/board";
 import { useFetcher } from "@remix-run/react";
-import type { EventResult } from "~/routes/roll-dice";
 
 interface BoardProps {
-    boardData: Board;
+    boardData: Tile[];
     playerData: Player;
 }
 export function Board({ boardData, playerData }: BoardProps) {
