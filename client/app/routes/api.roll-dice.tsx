@@ -1,10 +1,11 @@
 import { json } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
+
+import type { EventResult } from "~/types/board";
 import { supabase } from "~/utils/db.server";
 import { authStorage } from "~/utils/cookies";
 import { mintTokenToPlayer } from "~/utils/solana.server";
-
-import type { EventResult } from "~/types/board";
+import { mintNFTToPlayer } from "~/utils/nft.server";
 
 type Tile = {
     id: number;
@@ -105,10 +106,24 @@ async function processEvent(walletAddress: string, currentTile: Tile) {
 
     switch (currentTile.type.name) {
         case "Chance":
-            eventResult.result = "You rolled a " + currentTile.type.description;
+            try {
+                const mintResult = await mintNFTToPlayer("chance", walletAddress);
+                eventResult.result = "You received a Chance NFT!";
+                eventResult.signature = mintResult.signature;
+            } catch (error) {
+                console.error("Error minting Chance NFT:", error);
+                eventResult.result = "Failed to mint Chance NFT";
+            }
             break;
         case "Community Chest":
-            eventResult.result = "You rolled a " + currentTile.type.description;
+            try {
+                const mintResult = await mintNFTToPlayer("community_chest", walletAddress);
+                eventResult.result = "You received a Community Chest NFT!";
+                eventResult.signature = mintResult.signature;
+            } catch (error) {
+                console.error("Error minting Community Chest NFT:", error);
+                eventResult.result = "Failed to mint Community Chest NFT";
+            }
             break;
         case "Go":
             eventResult.result = "You rolled a " + currentTile.type.description;
