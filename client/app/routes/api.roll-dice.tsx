@@ -101,7 +101,6 @@ export const action: ActionFunction = async ({ request }) => {
     }
 };
 async function processEvent(walletAddress: string, currentTile: Tile) {
-    console.log("Processing event for tile:", currentTile);
     let eventResult: EventResult = { result: "", signature: "" };
 
     switch (currentTile.type.name) {

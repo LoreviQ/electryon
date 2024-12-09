@@ -119,8 +119,8 @@ export async function uploadMetadata(
         const imageFilename = `${imageHash}.png`;
         
         // Define paths (adjust the public path according to your Remix setup)
-        const publicDir = path.join(process.cwd(), 'assets', 'nft-gen');
-        const imagePath = path.join(publicDir, imageFilename);
+        const publicDir = path.join(process.cwd(), 'public', 'nft-assets');
+        const imagePath = path.join(publicDir, 'images', imageFilename);
         
         // Ensure directory exists
         await fs.mkdir(publicDir, { recursive: true });
@@ -139,7 +139,7 @@ export async function uploadMetadata(
         
         // Save metadata file
         const metadataFilename = `${imageHash}-metadata.json`;
-        const metadataPath = path.join(publicDir, metadataFilename);
+        const metadataPath = path.join(publicDir, 'metadata', metadataFilename);
         await fs.writeFile(metadataPath, JSON.stringify(metadata));
         
         // Return the metadata URL

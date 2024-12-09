@@ -2,6 +2,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useState, useEffect } from "react";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { Metaplex } from "@metaplex-foundation/js";
 
 import type { Token } from "~/types/database";
 
@@ -25,6 +26,12 @@ interface TokenBalance {
     balance: number | null;
 }
 
+interface NFT {
+    name: string;
+    image: string;
+    mint: string;
+}
+
 export default function Dashboard() {
     const { connection } = useConnection();
     const { publicKey } = useWallet();
@@ -32,6 +39,7 @@ export default function Dashboard() {
     const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>(
         TOKENS.map((config) => ({ config, balance: null }))
     );
+    const [nfts, setNfts] = useState<NFT[]>([]);
 
     useEffect(() => {
         async function getBalances() {
@@ -70,6 +78,7 @@ export default function Dashboard() {
                             : 0,
                     }))
                 );
+                // Fetch NFTs
             } catch (e) {
                 console.error("Error fetching balances:", e);
             }
@@ -99,6 +108,19 @@ export default function Dashboard() {
                         <p className="text-sm text-gray-500">Mint: {config.mint}</p>
                     </div>
                 ))}
+            </div>
+            <div className="mt-8">
+                <h2 className="text-2xl font-bold mb-4">Your NFTs</h2>
+                <div className="flex overflow-x-auto gap-4 pb-4">
+                    {nfts.map((nft) => (
+                        <div key={nft.mint} className="flex-none w-48 p-4 border rounded-lg">
+                            <img src={nft.image} alt={nft.name} className="w-full h-48 object-cover rounded-lg" />
+                            <p className="mt-2 text-center font-medium">{nft.name}</p>
+                            <p className="text-xs text-gray-500 text-center truncate">{nft.mint}</p>
+                        </div>
+                    ))}
+                    {nfts.length === 0 && <p className="text-gray-500">No NFTs found</p>}
+                </div>
             </div>
         </div>
     );
