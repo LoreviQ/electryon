@@ -3,6 +3,39 @@ import type { ActionFunction } from "@remix-run/node";
 import { supabase } from "~/utils/db.server";
 import { authStorage } from "~/utils/cookies";
 
+type QueryResponse = {
+    data:
+        | {
+              id: number;
+              type: {
+                  name: string;
+                  description: string;
+                  partner: {
+                      name: string;
+                      coin_mint: string;
+                      coin_symbol: string;
+                      coin_decimals: number;
+                  } | null;
+              };
+          }[]
+        | null;
+    error: any;
+};
+
+type CurrentTile = {
+    id: number;
+    type: {
+        name: string;
+        description: string;
+        partner: {
+            name: string;
+            coin_mint: string;
+            coin_symbol: string;
+            coin_decimals: number;
+        } | null;
+    };
+};
+
 export const action: ActionFunction = async ({ request }) => {
     try {
         // Get user from session
@@ -41,6 +74,28 @@ export const action: ActionFunction = async ({ request }) => {
         const diceSum = diceValues.reduce((a, b) => a + b, 0);
         const newPosition = gameState.position + diceSum;
 
+        // Get board tiles
+        const { data: tiles, error: tilesError } = (await supabase
+            .from("boardTiles")
+            .select(
+                `
+                id,
+                type: boardTileTypes (
+                    name, description,
+                    partner: partners (
+                        name, coin_mint, coin_symbol, coin_decimals
+                    )
+                )
+            `
+            )
+            .eq("season", 1)
+            .order("order", { ascending: true })) as QueryResponse;
+        if (tilesError) throw tilesError;
+        if (!tiles) throw new Error("No tiles found");
+        const tilePosition = newPosition % tiles.length;
+        const currentTile = tiles[tilePosition];
+        const eventResult = processEvent(currentTile);
+
         // Update position
         const { error: updateError } = await supabase
             .from("game_states")
@@ -49,9 +104,25 @@ export const action: ActionFunction = async ({ request }) => {
 
         if (updateError) throw updateError;
 
-        return json({ diceValues, newPosition });
+        return json({ diceValues, eventResult });
     } catch (error) {
         console.error("Error in roll-dice action:", error);
         return json({ error: "Failed to process dice roll" }, { status: 500 });
     }
 };
+
+function processEvent(currentTile: CurrentTile) {
+    console.log(currentTile);
+    switch (currentTile.type.name) {
+        case "Chance":
+            return "You rolled a " + currentTile.type.description;
+        case "Community Chest":
+            return "You rolled a " + currentTile.type.description;
+        case "Go":
+            return "You rolled a " + currentTile.type.description;
+        case "Prison":
+            return "You rolled a " + currentTile.type.description;
+        default:
+            return "You rolled a " + currentTile.type.description;
+    }
+}

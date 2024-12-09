@@ -116,6 +116,7 @@ export function Tile({ tile, showPlayerAvatar, PlayerAvatar }: TileProps) {
 }
 interface DiceResponse {
     diceValues: number[];
+    eventResult: string;
 }
 export function Dice({ numberOfDice = 2 }: { numberOfDice?: number }) {
     const fetcher = useFetcher<DiceResponse>();
@@ -126,8 +127,12 @@ export function Dice({ numberOfDice = 2 }: { numberOfDice?: number }) {
     };
 
     useEffect(() => {
-        if (fetcher.data?.diceValues) {
+        if (fetcher.data) {
             setDiceValues(fetcher.data.diceValues);
+            // Show alert with event result
+            if (fetcher.data.eventResult) {
+                alert(fetcher.data.eventResult);
+            }
         }
     }, [fetcher.data]);
 
