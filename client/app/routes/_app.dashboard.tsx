@@ -1,12 +1,12 @@
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useState, useEffect } from "react";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { Metaplex } from "@metaplex-foundation/js";
 
 import type { Token } from "~/types/database";
 
-// temporary tokens for demo
+// Constants
+const METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
 const TOKEN_1: Token = {
     mint: "C42DzRihK7jiWNMExgaTsA6swHnDhneH15nvki3b8QSM",
     name: "Colour Coffee",
@@ -21,6 +21,7 @@ const TOKEN_2: Token = {
 };
 const TOKENS = [TOKEN_1, TOKEN_2];
 
+// Types
 interface TokenBalance {
     config: Token;
     balance: number | null;
@@ -32,6 +33,34 @@ interface NFT {
     mint: string;
 }
 
+// Helper functions
+async function fetchSolBalance(connection: any, publicKey: PublicKey) {
+    const solBal = await connection.getBalance(publicKey);
+    return solBal / LAMPORTS_PER_SOL;
+}
+
+async function fetchTokenBalances(connection: any, publicKey: PublicKey) {
+    const tokenAccounts = await connection.getTokenAccountsByOwner(publicKey, {
+        programId: TOKEN_PROGRAM_ID,
+    });
+
+    const mintBalances = new Map<string, number>();
+
+    for (const tokenAccount of tokenAccounts.value) {
+        const accountInfo = await connection.getParsedAccountInfo(tokenAccount.pubkey);
+        const parsedInfo = accountInfo.value?.data;
+
+        if (parsedInfo && "parsed" in parsedInfo) {
+            const mintAddress = parsedInfo.parsed.info.mint;
+            const amount = Number(parsedInfo.parsed.info.tokenAmount.amount);
+            mintBalances.set(mintAddress, amount);
+        }
+    }
+
+    return mintBalances;
+}
+
+// Component
 export default function Dashboard() {
     const { connection } = useConnection();
     const { publicKey } = useWallet();
@@ -47,29 +76,11 @@ export default function Dashboard() {
 
             try {
                 // Get SOL balance
-                const solBal = await connection.getBalance(publicKey);
-                setSolBalance(solBal / LAMPORTS_PER_SOL);
+                const solBal = await fetchSolBalance(connection, publicKey);
+                setSolBalance(solBal);
 
-                // Get token accounts
-                const tokenAccounts = await connection.getTokenAccountsByOwner(publicKey, {
-                    programId: TOKEN_PROGRAM_ID,
-                });
-
-                // Create a map of mint addresses to balances
-                const mintBalances = new Map<string, number>();
-
-                for (const tokenAccount of tokenAccounts.value) {
-                    const accountInfo = await connection.getParsedAccountInfo(tokenAccount.pubkey);
-                    const parsedInfo = accountInfo.value?.data;
-
-                    if (parsedInfo && "parsed" in parsedInfo) {
-                        const mintAddress = parsedInfo.parsed.info.mint;
-                        const amount = Number(parsedInfo.parsed.info.tokenAmount.amount);
-                        mintBalances.set(mintAddress, amount);
-                    }
-                }
-
-                // Update token balances
+                // Get token balances
+                const mintBalances = await fetchTokenBalances(connection, publicKey);
                 setTokenBalances((tokens) =>
                     tokens.map((token) => ({
                         config: token.config,
@@ -78,7 +89,8 @@ export default function Dashboard() {
                             : 0,
                     }))
                 );
-                // Fetch NFTs
+
+                // Get NFTs - TODO
             } catch (e) {
                 console.error("Error fetching balances:", e);
             }
@@ -109,6 +121,7 @@ export default function Dashboard() {
                     </div>
                 ))}
             </div>
+
             <div className="mt-8">
                 <h2 className="text-2xl font-bold mb-4">Your NFTs</h2>
                 <div className="flex overflow-x-auto gap-4 pb-4">
