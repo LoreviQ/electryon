@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 
 import type { Board, Player, Tile } from "~/routes/_app.play";
 import { useFetcher } from "@remix-run/react";
+import type { EventResult } from "~/routes/roll-dice";
 
 interface BoardProps {
     boardData: Board;
@@ -116,7 +117,7 @@ export function Tile({ tile, showPlayerAvatar, PlayerAvatar }: TileProps) {
 }
 interface DiceResponse {
     diceValues: number[];
-    eventResult: string;
+    eventResult: EventResult;
 }
 export function Dice({ numberOfDice = 2 }: { numberOfDice?: number }) {
     const fetcher = useFetcher<DiceResponse>();
@@ -131,7 +132,7 @@ export function Dice({ numberOfDice = 2 }: { numberOfDice?: number }) {
             setDiceValues(fetcher.data.diceValues);
             // Show alert with event result
             if (fetcher.data.eventResult) {
-                alert(fetcher.data.eventResult);
+                alert(fetcher.data.eventResult.result);
             }
         }
     }, [fetcher.data]);

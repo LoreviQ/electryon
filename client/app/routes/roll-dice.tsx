@@ -2,27 +2,9 @@ import { json } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
 import { supabase } from "~/utils/db.server";
 import { authStorage } from "~/utils/cookies";
+import { mintTokenToPlayer } from "~/utils/solana.server";
 
-type QueryResponse = {
-    data:
-        | {
-              id: number;
-              type: {
-                  name: string;
-                  description: string;
-                  partner: {
-                      name: string;
-                      coin_mint: string;
-                      coin_symbol: string;
-                      coin_decimals: number;
-                  } | null;
-              };
-          }[]
-        | null;
-    error: any;
-};
-
-type CurrentTile = {
+type Tile = {
     id: number;
     type: {
         name: string;
@@ -34,6 +16,16 @@ type CurrentTile = {
             coin_decimals: number;
         } | null;
     };
+};
+
+type QueryResponse = {
+    data: Tile[] | null;
+    error: any;
+};
+
+export type EventResult = {
+    result: string;
+    signature: string;
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -94,7 +86,7 @@ export const action: ActionFunction = async ({ request }) => {
         if (!tiles) throw new Error("No tiles found");
         const tilePosition = newPosition % tiles.length;
         const currentTile = tiles[tilePosition];
-        const eventResult = processEvent(currentTile);
+        const eventResult = await processEvent(userCookie.walletAddress, currentTile);
 
         // Update position
         const { error: updateError } = await supabase
@@ -110,19 +102,41 @@ export const action: ActionFunction = async ({ request }) => {
         return json({ error: "Failed to process dice roll" }, { status: 500 });
     }
 };
+async function processEvent(walletAddress: string, currentTile: Tile) {
+    console.log("Processing event for tile:", currentTile);
+    let eventResult: EventResult = { result: "", signature: "" };
 
-function processEvent(currentTile: CurrentTile) {
-    console.log(currentTile);
     switch (currentTile.type.name) {
         case "Chance":
-            return "You rolled a " + currentTile.type.description;
+            eventResult.result = "You rolled a " + currentTile.type.description;
+            break;
         case "Community Chest":
-            return "You rolled a " + currentTile.type.description;
+            eventResult.result = "You rolled a " + currentTile.type.description;
+            break;
         case "Go":
-            return "You rolled a " + currentTile.type.description;
+            eventResult.result = "You rolled a " + currentTile.type.description;
+            break;
         case "Prison":
-            return "You rolled a " + currentTile.type.description;
+            eventResult.result = "You rolled a " + currentTile.type.description;
+            break;
+        case "Partner Tile":
+            if (!currentTile.type.partner) throw new Error("Partner not found");
+            try {
+                const mintResult = await mintTokenToPlayer(
+                    walletAddress,
+                    currentTile.type.partner.coin_mint,
+                    1, // amount to mint
+                    currentTile.type.partner.coin_decimals
+                );
+                if (!mintResult.success) throw new Error("Minting failed");
+                eventResult.result = "You gained a $" + currentTile.type.partner.coin_symbol;
+                eventResult.signature = mintResult.signature;
+            } catch (mintError) {
+                console.error("Error minting tokens:", mintError);
+            }
+            break;
         default:
-            return "You rolled a " + currentTile.type.description;
+            eventResult.result = "You rolled a " + currentTile.type.description;
     }
+    return eventResult;
 }
