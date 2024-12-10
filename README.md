@@ -48,6 +48,10 @@ Check out Electryon in action:
 - Remix React
 - Web3.js
 
+### Project Structure
+- `/client` - Web frontend built with Remix React, using @solana/web3.js and @solana/spl-token packages
+- `/coin` - Rust implementation of token contracts and liquidity pools
+
 ## 🏆 Hackathon Project
 
 This project was built during [Hackathon Name] by Team Electryon.
