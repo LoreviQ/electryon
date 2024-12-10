@@ -125,8 +125,14 @@ export default function Play() {
             <div className="bg-gray-800 rounded-lg p-6 min-w-0 mx-auto overflow-hidden">
                 <Board boardData={boardData} playerData={playerData} />
                 {/* Dice Section */}
-                <div className="flex flex-col items-center">
-                    <Dice numberOfDice={1} />
+                <div className="grid grid-cols-3 items-center">
+                    <div className="text-end text-2xl">
+                        <p>1 BONK = 1 ROLL</p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <Dice numberOfDice={1} />
+                    </div>
+                    <div>{/* Empty column */}</div>
                 </div>
             </div>
         </div>

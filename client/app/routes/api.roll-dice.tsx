@@ -6,6 +6,7 @@ import { supabase } from "~/utils/db.server";
 import { authStorage } from "~/utils/cookies";
 import { mintTokenToPlayer } from "~/utils/solana.server";
 import { mintNFTToPlayer } from "~/utils/nft.server";
+import { transferTokens } from "~/utils/solana.server";
 
 type Tile = {
     id: number;
@@ -26,6 +27,11 @@ type QueryResponse = {
     error: any;
 };
 
+const FAKE_BONK_MINT = "3KFL98QBgCtXYXmYe68E1vKaL2wsBcKeiZ1dGJpaB9YW";
+const TREASURY_WALLET = "H7Z3wbMdVuKcNHqc3ce3c4dpG58FFPuMgoBHkabeS6WC";
+const FAKE_BONK_DECIMALS = 6;
+const ROLL_COST = 1;
+
 export const action: ActionFunction = async ({ request }) => {
     try {
         // Get user from session
@@ -35,6 +41,26 @@ export const action: ActionFunction = async ({ request }) => {
         if (!userCookie?.walletAddress) {
             throw new Error("No wallet address found in session");
         }
+
+        // Transfer BONK first
+        const transferResult = await transferTokens(
+            userCookie.walletAddress,
+            TREASURY_WALLET,
+            FAKE_BONK_MINT,
+            ROLL_COST,
+            FAKE_BONK_DECIMALS
+        );
+
+        if (!transferResult.success) {
+            return json(
+                {
+                    error: "Failed to process payment. Please ensure you have enough BONK.",
+                },
+                { status: 400 }
+            );
+        }
+
+        // below would be moved to seperate endpoint for processing user signing
 
         // Get user ID
         const { data: user, error: userError } = await supabase

@@ -21,6 +21,9 @@ interface NFT {
     mint: string;
 }
 
+const FAKE_BONK_MINT = "3KFL98QBgCtXYXmYe68E1vKaL2wsBcKeiZ1dGJpaB9YW";
+const FAKE_BONK_DECIMALS = 6;
+
 export async function loader() {
     try {
         const { data: partners, error } = await supabase
@@ -77,6 +80,7 @@ export default function Dashboard() {
     const { publicKey } = useWallet();
     const { tokens } = useLoaderData<typeof loader>();
     const [solBalance, setSolBalance] = useState<number | null>(null);
+    const [bonkBalance, setBonkBalance] = useState<number | null>(null);
     const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>(
         tokens.map((config) => ({ config, balance: null }))
     );
@@ -93,6 +97,11 @@ export default function Dashboard() {
 
                 // Get token balances
                 const mintBalances = await fetchTokenBalances(connection, publicKey);
+
+                // Faked BONK balance
+                const rawBonkBalance = mintBalances.get(FAKE_BONK_MINT);
+                setBonkBalance(rawBonkBalance ? rawBonkBalance / Math.pow(10, FAKE_BONK_DECIMALS) : 0);
+
                 setTokenBalances((tokens) =>
                     tokens.map((token) => ({
                         config: token.config,
@@ -121,6 +130,11 @@ export default function Dashboard() {
                 <div className="p-4 border rounded">
                     <h3 className="font-semibold">SOL Balance</h3>
                     <p>{solBalance !== null ? `${solBalance.toFixed(4)} SOL` : "Loading..."}</p>
+                </div>
+
+                <div className="p-4 border rounded">
+                    <h3 className="font-semibold">BONK Balance (Faked for devnet)</h3>
+                    <p>{bonkBalance !== null ? `${bonkBalance.toFixed(4)} BONK` : "Loading..."}</p>
                 </div>
 
                 {tokenBalances.map(({ config, balance }) => (

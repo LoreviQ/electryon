@@ -1,5 +1,5 @@
-import { Connection, PublicKey, Keypair } from "@solana/web3.js";
-import { mintTo, getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
+import { Connection, PublicKey, Keypair, VersionedTransaction, TransactionMessage } from "@solana/web3.js";
+import { mintTo, getOrCreateAssociatedTokenAccount, createTransferInstruction, getAssociatedTokenAddress } from "@solana/spl-token";
 import { 
     Metaplex, 
     keypairIdentity, 
@@ -147,5 +147,73 @@ export async function uploadMetadata(
     } catch (error) {
         console.error("Error saving files:", error);
         throw error;
+    }
+}
+
+export async function transferTokens(
+    fromAddress: string,
+    toAddress: string,
+    mintAddress: string,
+    amount: number,
+    decimals: number
+) {
+    try {
+        const connection = new Connection(SOLANA_RPC_URL, "confirmed");
+        const payerKeypair = Keypair.fromSecretKey(bs58.decode(PAYER_SECRET_KEY));
+        
+        // Convert addresses to PublicKeys
+        const fromPubkey = new PublicKey(fromAddress);
+        const toPubkey = new PublicKey(toAddress);
+        const mintPubkey = new PublicKey(mintAddress);
+
+        // Get associated token accounts for both wallets
+        const fromATA = await getOrCreateAssociatedTokenAccount(
+            connection,
+            payerKeypair,
+            mintPubkey,
+            fromPubkey
+        );
+
+        const toATA = await getOrCreateAssociatedTokenAccount(
+            connection,
+            payerKeypair,
+            mintPubkey,
+            toPubkey
+        );
+
+        // Create transfer instruction
+        const transferInstruction = createTransferInstruction(
+            fromATA.address,
+            toATA.address,
+            fromPubkey,
+            amount * (10 ** decimals)
+        );
+
+        // Get latest blockhash
+        const latestBlockhash = await connection.getLatestBlockhash();
+
+        // Create TransactionMessage
+        const message = new TransactionMessage({
+            payerKey: fromPubkey,
+            recentBlockhash: latestBlockhash.blockhash,
+            instructions: [transferInstruction]
+        }).compileToV0Message();
+
+        // Create VersionedTransaction
+        const transaction = new VersionedTransaction(message);
+
+        return { 
+            success: true, 
+            transaction: transaction.serialize(),
+            message: "Transaction needs to be signed by the user's wallet"
+        };
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error transferring tokens:", error.message);
+            if ('logs' in error) {
+                console.error("Transaction logs:", (error as any).logs);
+            }
+        }
+        return { success: false, error };
     }
 }
