@@ -19,8 +19,8 @@ export default function Index() {
             <Hero />
             <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
                 <FeatureCard
-                    header="BTC-Backed Stablecoin"
-                    description="Secure your wealth with our Bitcoin-backed stablecoin, combining stability with the security of BTC."
+                    header="Gamified Investment"
+                    description="Roll the dice and collect properties (real businesses) to earn tokens that can be exchanged for SOL."
                     icon={<CoinIcon color="text-blue-400" />}
                     iconBgColor="bg-blue-500/20"
                 />
