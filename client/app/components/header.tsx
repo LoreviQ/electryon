@@ -21,7 +21,7 @@ export function Header({ preferences, username, contentWidth }: HeaderProps) {
         <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
             <div className={`grid grid-cols-10 items-center h-16 px-8 mx-auto ${contentWidth}`}>
                 <div className="flex items-center space-x-4 justify-start col-span-2">
-                    <fetcher.Form method="post" action="updatePreferences">
+                    <fetcher.Form method="post" action="/api/updatePreferences">
                         <input type="hidden" name="narrowMode" value={(!preferences.narrowMode).toString()} />
                         <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200">
                             {preferences.narrowMode ? (
@@ -31,7 +31,7 @@ export function Header({ preferences, username, contentWidth }: HeaderProps) {
                             )}
                         </button>
                     </fetcher.Form>
-                    <fetcher.Form method="post" action="updatePreferences">
+                    <fetcher.Form method="post" action="/api/updatePreferences">
                         <input type="hidden" name="showSidebar" value={(!preferences.showSidebar).toString()} />
                         <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200">
                             <Bars3Icon className="size-6" />
@@ -83,7 +83,7 @@ function Dropdown() {
     return (
         <div className="absolute right-0 top-full mt-3 w-48 rounded-lg bg-gray-800 border border-gray-700 shadow-lg">
             <div className="py-1">
-                <Form method="post" action="/logout">
+                <Form method="post" action="/api/logout">
                     <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 transition-colors">
                         Logout
                     </button>

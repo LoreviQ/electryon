@@ -1,50 +1,124 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
+import type { Tile, Player } from "~/types/board";
+import { supabase } from "~/utils/db.server";
 import { Board, Dice } from "~/components/board";
+import { authStorage } from "~/utils/cookies";
 
-const BOARD_TILES = [
-    { id: 0, type: "start", color: "bg-green-400", effect: "None", colSpan: 2 },
-    { id: 1, type: "partner", color: "bg-teal-600", effect: "Obtain Colour Coffee Tokens", colSpan: 1 },
-    { id: 2, type: "chance", color: "bg-yellow-500", effect: "Draw a card", colSpan: 1 },
-    { id: 3, type: "partner", color: "bg-teal-600", effect: "Obtain Colour Coffee Tokens", colSpan: 1 },
-    { id: 4, type: "chest", color: "bg-purple-500", effect: "Open chest", colSpan: 1 },
-    { id: 5, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
-    { id: 6, type: "chance", color: "bg-yellow-500", effect: "Draw a card", colSpan: 1 },
-    { id: 7, type: "partner", color: "bg-indigo-800", effect: "Obtain Page Turners Tokens", colSpan: 1 },
-    { id: 8, type: "prison", color: "bg-green-400", effect: "TBD", colSpan: 2 },
-];
-
-export type Tile = {
-    id: number;
-    type: string;
-    color: string;
-    effect: string;
-    colSpan: number;
+type QueryResponse = {
+    data:
+        | {
+              color: string;
+              size: string;
+              order: number;
+              type: {
+                  name: string;
+                  description: string;
+                  partner: {
+                      name: string;
+                      path_name: string;
+                      logo: string;
+                  } | null;
+              };
+          }[]
+        | null;
+    error: any;
 };
 
-export type Board = Tile[];
+export async function loader({ request }: LoaderFunctionArgs) {
+    try {
+        // Get session data
+        const session = await authStorage.getSession(request.headers.get("Cookie"));
+        const userCookie = session.get("user");
 
-export type Player = {
-    name: string;
-    avatar: string;
-    position: number;
-};
+        if (!userCookie?.walletAddress) {
+            throw new Error("No wallet address found in session");
+        }
 
-export async function loader() {
-    return json({
-        playerData: {
-            name: "Player 1",
-            avatar: "👤",
-            position: 0,
-        },
-        boardData: BOARD_TILES,
-    });
+        // Get user data
+        const { data: user, error: userError } = await supabase
+            .from("users")
+            .select("id, username, avatar")
+            .eq("wallet_address", userCookie.walletAddress)
+            .single();
+        if (userError) throw userError;
+
+        // Get or create game state
+        const { data: gameState, error: gameStateError } = await supabase
+            .from("game_states")
+            .select("position")
+            .eq("user", user.id)
+            .single();
+        if (gameStateError && gameStateError.code !== "PGRST116") {
+            // PGRST116 is "not found" error, throws all errors except this
+            throw gameStateError;
+        }
+
+        if (gameStateError) {
+            // Create new game state
+            const { error: createError } = await supabase
+                .from("game_states")
+                .insert([{ user: user.id, position: 0 }])
+                .select("position")
+                .single();
+            if (createError) throw createError;
+        }
+
+        const userData = {
+            name: user.username,
+            avatar: user.avatar || "/images/default-avatar.png",
+            position: gameState?.position || 0,
+        };
+
+        // Get board tiles
+        const { data: boardTiles, error } = (await supabase
+            .from("boardTiles")
+            .select(
+                `
+                color, size, order, 
+                type: boardTileTypes (
+                    name, description,
+                    partner: partners (
+                        name, path_name, logo
+                    )
+                )`
+            )
+            .eq("season", 1)
+            .order("order")) as QueryResponse;
+        if (error) throw error;
+        const formattedData =
+            boardTiles?.map((tile) => ({
+                id: tile.order,
+                type: tile.type.name,
+                color: tile.color,
+                effect: tile.type.description,
+                colSpan: tile.size === "lg" ? 2 : 1,
+                partner: tile.type.partner || null,
+            })) || [];
+
+        return json({
+            playerData: userData,
+            boardData: formattedData,
+        });
+    } catch (error) {
+        console.error("Database error:", error);
+        return json({
+            playerData: {
+                name: "Player 1",
+                avatar: "/images/default-avatar.png",
+                position: 0,
+            },
+            boardData: [],
+        });
+    }
 }
 
 export default function Play() {
-    const { playerData, boardData } = useLoaderData<typeof loader>();
-
+    const loaderData = useLoaderData<typeof loader>();
+    const playerData = loaderData.playerData as Player;
+    const boardData = loaderData.boardData as Tile[];
     return (
         <div className="space-y-6 min-w-0">
             <h1 className="text-4xl font-bold text-center">Play</h1>

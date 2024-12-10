@@ -13,12 +13,20 @@ mod state;
 use processor::Processor;
 
 #[derive(BorshSerialize, BorshDeserialize)]
-pub enum StablecoinInstruction {
-    InitializeVault,                        // Create new vault
-    DepositCollateral { amount: u64 },      // Deposit BTC collateral
-    MintStablecoin { amount: u64 },         // Create new stablecoins
-    RedeemStablecoin { amount: u64 },       // Redeem stablecoins for BTC
-    WithdrawCollateral { amount: u64 },     // Withdraw BTC collateral
+pub enum TokenInstruction {
+    InitializeVault {
+        min_collateral_ratio: u64
+    },
+    DepositCollateral { 
+        amount: u64 
+    },
+    WithdrawCollateral { 
+        amount: u64 
+    },
+    MintTokens { 
+        amount: u64,
+        recipient: Pubkey 
+    },
 }
 
 entrypoint!(process_instruction);
@@ -38,6 +46,11 @@ pub fn process_instruction(
         StablecoinInstruction::DepositCollateral { amount } => {
             Processor::process_deposit_collateral(accounts, amount, program_id)
         },
-        // ... other instruction handlers
+        TokenInstruction::WithdrawCollateral { amount } => {
+            Processor::process_withdraw_collateral(accounts, amount, program_id)
+        },
+        TokenInstruction::MintTokens { amount, recipient } => {
+            Processor::process_mint_tokens(accounts, amount, recipient, program_id)
+        },
     }
 }

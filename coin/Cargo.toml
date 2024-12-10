@@ -1,14 +1,17 @@
 [package]
-name = "electryon"
+name = "game-token"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+no-entrypoint = []
 
 [dependencies]
-solana-program = "1.16"
+solana-program = "1.17.0"
+borsh = "0.10.3"
 thiserror = "1.0"
-spl-token = { version = "3.5", features = ["no-entrypoint"] }
-borsh = "0.10"
-zeus-sdk = "0.1"  # hypothetical Zeus Network SDK
-pyth-sdk-solana = "0.7"  # for price feeds
+spl-token = { version = "4.0", features = [ "no-entrypoint" ] }
+spl-associated-token-account = { version = "2.0", features = [ "no-entrypoint" ] }
+
+[lib]
+crate-type = ["cdylib", "lib"]

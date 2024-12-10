@@ -8,10 +8,12 @@ export function Logo() {
 
 interface IconProps {
     color?: string;
+    width?: string;
+    height?: string;
 }
-export function CoinIcon({ color = "" }: IconProps) {
+export function CoinIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
     return (
-        <svg className={`w-6 h-6 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -22,9 +24,9 @@ export function CoinIcon({ color = "" }: IconProps) {
     );
 }
 
-export function BuildingIcon({ color = "" }: IconProps) {
+export function BuildingIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
     return (
-        <svg className={`w-6 h-6 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -35,9 +37,9 @@ export function BuildingIcon({ color = "" }: IconProps) {
     );
 }
 
-export function VerifiedIcon({ color = "" }: IconProps) {
+export function VerifiedIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
     return (
-        <svg className={`w-6 h-6 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -48,9 +50,9 @@ export function VerifiedIcon({ color = "" }: IconProps) {
     );
 }
 
-export function BlockIcon({ color = "" }: IconProps) {
+export function BlockIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
     return (
-        <svg className={`w-6 h-6 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -61,9 +63,9 @@ export function BlockIcon({ color = "" }: IconProps) {
     );
 }
 
-export function CogIcon({ color = "" }: IconProps) {
+export function CogIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
     return (
-        <svg className={`w-6 h-6 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -75,9 +77,9 @@ export function CogIcon({ color = "" }: IconProps) {
     );
 }
 
-export function DiceIcon({ color = "" }: IconProps) {
+export function DiceIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
     return (
-        <svg className={`w-6 h-6 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -89,6 +91,113 @@ export function DiceIcon({ color = "" }: IconProps) {
                 strokeLinejoin="round"
                 strokeWidth={2}
                 d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01"
+            />
+        </svg>
+    );
+}
+
+export function GlobeIcon({ color = "", width = "w-4", height = "h-4" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+    );
+}
+
+export function TwitterIcon({ color = "", width = "w-4", height = "h-4" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+    );
+}
+
+export function TelegramIcon({ color = "", width = "w-4", height = "h-4" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20.665 3.717l-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42l10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701l-.332 4.99c.322 0 .464-.149.644-.322l1.546-1.504l4.42 3.26c.81.447 1.397.217 1.599-.756l2.894-13.644c.295-1.183-.429-1.72-1.247-1.37z" />
+        </svg>
+    );
+}
+
+export function ChanceIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+        </svg>
+    );
+}
+
+export function CommunityChestIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+            />
+        </svg>
+    );
+}
+
+export function GoIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+    );
+}
+
+export function PrisonIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 4v16m3-16v16m3-16v16m3-16v16m3-16v16M4 4h16M4 20h16"
+            />
+        </svg>
+    );
+}
+
+export function FreeParkingIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 17h14m-4-4H9m8 0a3 3 0 01-3 3H9a3 3 0 01-3-3V7a3 3 0 013-3h6a3 3 0 013 3v6z"
+            />
+            <circle cx="7" cy="17" r="2" strokeWidth={2} />
+            <circle cx="17" cy="17" r="2" strokeWidth={2} />
+        </svg>
+    );
+}
+
+export function GoToJailIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 13v6a2 2 0 01-2 2h-2v-8h2a2 2 0 012 2z"
             />
         </svg>
     );
