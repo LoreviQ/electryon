@@ -84,6 +84,11 @@ export default function Login() {
         }
 
         const encodedMessage = new TextEncoder().encode(message);
+        function bufferToHex(buffer: Uint8Array): string {
+            return Array.from(buffer)
+                .map((b) => b.toString(16).padStart(2, "0"))
+                .join("");
+        }
 
         try {
             const signature = await wallet.signMessage(encodedMessage);
@@ -91,7 +96,7 @@ export default function Login() {
             submit(
                 {
                     walletAddress: wallet.publicKey.toString(),
-                    signature: Buffer.from(signature).toString("hex"),
+                    signature: bufferToHex(signature),
                 },
                 { method: "post" }
             );
