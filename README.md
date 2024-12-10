@@ -71,10 +71,10 @@ We welcome contributions! Feel free to open issues and submit PRs.
 *Note: This is a hackathon project. Please use for testing purposes only.*
 
 ## Contact Us
-#### Oliver
+#### Oliver (Software Developer)
 - Telegram: [@loreviq](https://t.me/loreviq)
 - Email: oliver.tj@oliver.tj
-#### Steven
+#### Steven (Product / Business)
 - Telegram: [@Xoao3](https://t.me/Xoao3)
 - Twitter: https://www.x.com/xoaonft
 
