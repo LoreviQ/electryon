@@ -168,3 +168,37 @@ export function PrisonIcon({ color = "", width = "w-6", height = "h-6" }: IconPr
         </svg>
     );
 }
+
+export function FreeParkingIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 17h14m-4-4H9m8 0a3 3 0 01-3 3H9a3 3 0 01-3-3V7a3 3 0 013-3h6a3 3 0 013 3v6z"
+            />
+            <circle cx="7" cy="17" r="2" strokeWidth={2} />
+            <circle cx="17" cy="17" r="2" strokeWidth={2} />
+        </svg>
+    );
+}
+
+export function GoToJailIcon({ color = "", width = "w-6", height = "h-6" }: IconProps) {
+    return (
+        <svg className={`${width} ${height} ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 13v6a2 2 0 01-2 2h-2v-8h2a2 2 0 012 2z"
+            />
+        </svg>
+    );
+}

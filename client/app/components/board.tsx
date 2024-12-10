@@ -1,4 +1,4 @@
-import { ChanceIcon, CommunityChestIcon, GoIcon, PrisonIcon } from "./icons";
+import { ChanceIcon, CommunityChestIcon, GoIcon, PrisonIcon, FreeParkingIcon, GoToJailIcon } from "./icons";
 import { useState, useRef, useEffect } from "react";
 
 import type { Player, Tile, EventResult } from "~/types/board";
@@ -76,8 +76,12 @@ export function Tile({ tile, showPlayerAvatar, PlayerAvatar }: TileProps) {
                 return <CommunityChestIcon color={tile.color} width="w-24" height="h-24" />;
             case "Go":
                 return <GoIcon color={tile.color} width="w-24" height="h-24" />;
-            case "Prison":
+            case "Jail":
                 return <PrisonIcon color={tile.color} width="w-24" height="h-24" />;
+            case "Free Parking":
+                return <FreeParkingIcon color={tile.color} width="w-24" height="h-24" />;
+            case "Go to Jail":
+                return <GoToJailIcon color={tile.color} width="w-24" height="h-24" />;
             default:
                 return tile.partner ? (
                     <div className="p-2">
