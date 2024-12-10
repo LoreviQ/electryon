@@ -56,7 +56,7 @@ https://github.com/user-attachments/assets/b5e8fbe9-a7c9-4e61-8968-18a9b318e042
 
 ## 🏆 Hackathon Project
 
-This project was built during [Hackathon Name] by Team Electryon.
+This project was built during Taipei Blockchain Week 2024 by Team Electryon.
 
 ## 📱 Try It Out
 
