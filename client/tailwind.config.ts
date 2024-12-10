@@ -4,11 +4,18 @@ export default {
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
   safelist: [
     "text-red-600",
-    'bg-teal-600',
-    "text-purple-500",
     "text-yellow-500",
-    "bg-indigo-800",
+    "text-purple-500",
     "text-amber-500",
+    "text-blue-600",
+    "bg-orange-950",
+    "bg-sky-400",
+    "bg-pink-600",
+    "bg-amber-600",
+    "bg-red-600" ,
+    "bg-yellow-400",
+    "bg-green-600",
+    "bg-blue-600",
   ],
   theme: {
     extend: {

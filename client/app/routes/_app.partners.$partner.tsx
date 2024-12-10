@@ -34,7 +34,7 @@ export default function PartnerDetail() {
                         className="w-24 h-24 object-contain bg-gray-700 rounded-lg p-2"
                     />
                     <div>
-                        <h1 className="text-3xl font-bold">{partner.name}</h1>
+                        <h1 className="text-3xl font-bold">{`${partner.name} ($${partner.coin_symbol})`}</h1>
                         <p className="text-gray-400 mt-2">
                             {partner.category} · {partner.country}
                         </p>
