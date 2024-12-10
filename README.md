@@ -31,7 +31,9 @@ Electryon is a gamified investment platform built on Solana that turns investing
 
 Check out Electryon in action:
 - [Live Demo](https://electryon-six.vercel.app/)
-- [Video Demo](https://video-demo-link-here.com)
+
+### Video Demo
+https://github.com/user-attachments/assets/b5e8fbe9-a7c9-4e61-8968-18a9b318e042
 
 ## 💡 Why Electryon?
 
