@@ -4,11 +4,10 @@ import { CoinIcon, BuildingIcon, VerifiedIcon } from "~/components/icons";
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "Electryon - BTC-Backed Stablecoin & Fractional Investment Platform" },
+        { title: "Electryon - Gameified Fractional Investment" },
         {
             name: "description",
-            content:
-                "Discover Electryon's BTC-backed stablecoin and invest in fractional shares of promising businesses.",
+            content: "Discover Electryon's gameified fractional investment in promising businesses.",
         },
     ];
 };
